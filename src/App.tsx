@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 
 const useTimer = (initialTime: number, {
+  autostart,
   speedUpFirstSecond,
   onPause,
   onStart,
   onReset,
   onEnd,
 }: {
+  autostart?: boolean
   speedUpFirstSecond?: boolean,
   onPause?: (currentTime: number) => void
   onStart?: (currentTime: number) => void
@@ -16,7 +18,7 @@ const useTimer = (initialTime: number, {
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
   const [currentTime, setCurrentTime] = useState(initialTime)
-  const [isRunning, setIsRunning] = useState(false)
+  const [isRunning, setIsRunning] = useState(!!autostart)
 
   const stopTimer = () => {
     if (!firstTickRef.current) return
@@ -31,6 +33,10 @@ const useTimer = (initialTime: number, {
     clearTimeout(firstTickRef.current)
     firstTickRef.current = null
   }
+
+  useEffect(() => {
+    autostart && start()
+  }, [])
 
   useEffect(() => {
     if (currentTime !== 0) return
@@ -82,17 +88,22 @@ const useTimer = (initialTime: number, {
 }
 
 const useStatelessTimer = (initialTime: number, {
+  autostart,
   onStart,
   onStop,
   onEnd,
 }: {
-  speedUpFirstSecond?: boolean,
+  autostart?: boolean
   onStart?: () => void
   onStop?: () => void
   onEnd?: () => void
 }) => {
   const timerRef = useRef<number | null>(null)
-  const [isRunning, setIsRunning] = useState(false)
+  const [isRunning, setIsRunning] = useState(!!autostart)
+
+  useEffect(() => {
+    autostart && start()
+  }, [])
 
   const stopTimer = () => {
     if (!timerRef.current) return
@@ -131,6 +142,7 @@ const useStatelessTimer = (initialTime: number, {
 
 function App() {
   const { start, pause, reset, currentTime, isRunning } = useTimer(3, {
+    // autostart: true,
     speedUpFirstSecond: false,
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
@@ -139,6 +151,7 @@ function App() {
   })
 
   const test = useStatelessTimer(3, {
+    // autostart: true,
     onStart: () => console.log('start'),
     onStop: () => console.log('stop'),
     onEnd: () => console.log('time ended')
