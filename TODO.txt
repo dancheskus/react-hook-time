@@ -1,0 +1,66 @@
+Должны присутствовать компоненты
+  - Секундомер - время идет вперед
+  - Таймер - обратный отсчет
+  - Интервал - выплнение действия с определенным промежутком времени
+
+Все могут принимать
+ - autostart
+ - step?
+
+Таймер может принимать
+  - Миллисекунды
+  - Секунды
+  - Минуты
+  - Часы
+  - Дни
+  - Года
+  - Дата (объект)
+  - onUpdate
+  - onEnd
+  - onStop
+  - onPause
+  - onReset
+
+Интервал принимает
+  - Миллисекунды
+  - Секунды
+  - Минуты
+  - Часы
+  - Дни
+  - Года
+  - onUpdate
+  - onStop
+  - onPause
+  - onReset
+  - через какое количество итераций остановить
+
+Если принимается несколько параметров, то они суммируются?
+
+Все компоненты возвращают
+  - start
+  - stop
+  - pause
+  - reset
+  - time - объект с нынешнем состоянием времени. мс, с, м, ч
+  - increaseTime
+  - decreaseTime
+  - isRunning
+  - isStopped
+  - isPaused
+  - status ('RUNNING' | 'STOPPED' | 'PAUSED')
+
+Нужны ли функции
+  - timeToStop - отдельный параметр контролирующий до какого времени идет таймер. Если не до 0.
+
+Примеры вызова
+
+const timer1 = useTimer(60)
+timer1.start()
+
+const timer2 = useTimer(60, {
+  unit: 'seconds',
+  onUpdate: ({ isEnded, isRunning, secondsLeft, millisecondsLeft, daysLeft }) => {
+
+  }
+})
+timer2.start()
