@@ -150,7 +150,7 @@ function App() {
     onEnd: () => console.log('time ended')
   })
 
-  const test = useStatelessTimer(3, {
+  const statelessTimer = useStatelessTimer(3, {
     // autostart: true,
     onStart: () => console.log('start'),
     onStop: () => console.log('stop'),
@@ -168,10 +168,10 @@ function App() {
       <div>isRunning: {String(isRunning)}</div>
       <div>{currentTime}</div>
 
-      <h1>Timer 2</h1>
-      <button onClick={test.start}>Start</button>
-      <button onClick={test.stop}>Stop</button>
-      <div>isRunning: {String(test.isRunning)}</div>
+      <h1>Stateless Timer 2</h1>
+      <button onClick={statelessTimer.start}>Start</button>
+      <button onClick={statelessTimer.stop}>Stop</button>
+      <div>isRunning: {String(statelessTimer.isRunning)}</div>
     </div>
   )
 }
