@@ -82,7 +82,6 @@ const useTimer = (initialTime: number, {
 }
 
 const useStatelessTimer = (initialTime: number, {
-  speedUpFirstSecond,
   onStart,
   onStop,
   onEnd,
