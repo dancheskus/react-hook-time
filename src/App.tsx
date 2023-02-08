@@ -90,12 +90,12 @@ const useTimer = (initialTime: number, {
 const useStatelessTimer = (initialTime: number, {
   autostart,
   onStart,
-  onStop,
+  onCancel,
   onEnd,
 }: {
   autostart?: boolean
   onStart?: () => void
-  onStop?: () => void
+  onCancel?: () => void
   onEnd?: () => void
 }) => {
   const timerRef = useRef<number | null>(null)
@@ -126,16 +126,16 @@ const useStatelessTimer = (initialTime: number, {
     }, initialTime * 1000)
   }
 
-  const stop = () => {
+  const cancel = () => {
     if (!timerRef.current) return
 
-    onStop && onStop()
+    onCancel && onCancel()
     stopTimer()
   }
 
   return {
     start,
-    stop,
+    cancel,
     isRunning,
   }
 }
@@ -147,14 +147,14 @@ function App() {
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
-    onEnd: () => console.log('time ended')
+    onEnd: () => console.log('end')
   })
 
   const statelessTimer = useStatelessTimer(3, {
     // autostart: true,
     onStart: () => console.log('start'),
-    onStop: () => console.log('stop'),
-    onEnd: () => console.log('time ended')
+    onCancel: () => console.log('cancel'),
+    onEnd: () => console.log('end')
   })
 
   console.log('component updated...')
@@ -170,7 +170,7 @@ function App() {
 
       <h1>Stateless Timer 2</h1>
       <button onClick={statelessTimer.start}>Start</button>
-      <button onClick={statelessTimer.stop}>Stop</button>
+      <button onClick={statelessTimer.cancel}>Cancel</button>
       <div>isRunning: {String(statelessTimer.isRunning)}</div>
     </div>
   )
