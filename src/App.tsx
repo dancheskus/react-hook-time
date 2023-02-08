@@ -31,6 +31,11 @@ const convertMsToUnit = (time: number, timeUnit: TTimeUnit) => {
   }
 }
 
+interface IResetSettings {
+  startIfWasStopped: boolean
+  continueIfWasRunning: boolean
+}
+
 const useStopwatch = (
   {
     initialTime = 0,
@@ -154,15 +159,19 @@ const useTimer = (
     stopTimer()
   }, [currentTime])
 
-  const start = () => {
-    if (timerRef.current || firstTickRef.current || currentTime === 0) return
+  const start = (startSettings?: { withTime: number }) => {
+    const { withTime } = startSettings || {}
+
+    if (timerRef.current || firstTickRef.current || (!withTime && currentTime === 0)) return
 
     onStart && onStart(getReturningTime(currentTime))
 
     setIsRunning(true)
 
+    withTime && setCurrentTime(withTime)
+
     firstTickRef.current = setTimeout(() => {
-      const newValue = currentTime - 1000
+      const newValue = (withTime || currentTime) - 1000
       setCurrentTime(newValue)
 
       if (newValue === 0) return
@@ -173,11 +182,19 @@ const useTimer = (
     }, speedUpFirstSecond ? 300 : 1000)
   }
 
-  const reset = () => {
+  const reset = (resetSettings?: IResetSettings) => {
+    const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
+
     onReset && onReset(getReturningTime(convertedInitialTime))
 
-    stopTimer()
-    setCurrentTime(convertedInitialTime)
+    if (continueIfWasRunning && isRunning) {
+      setCurrentTime(convertedInitialTime)
+    } else if (startIfWasStopped && !isRunning) {
+      start({ withTime: convertedInitialTime })
+    } else {
+      stopTimer()
+      setCurrentTime(convertedInitialTime)
+    }
   }
 
   const pause = () => {
@@ -256,7 +273,7 @@ const useStatelessTimer = (
 }
 
 function App() {
-  const { start, pause, reset, currentTime, isRunning } = useTimer(1, {
+  const timer = useTimer(5, {
     // autostart: true,
     speedUpFirstSecond: false,
     // timeUnit: 'min',
@@ -287,11 +304,16 @@ function App() {
   return (
     <div>
       <h1>Timer</h1>
-      <button onClick={start}>Start</button>
-      <button onClick={pause}>Pause</button>
-      <button onClick={reset}>Reset</button>
-      <div>isRunning: {String(isRunning)}</div>
-      <div>currentTime: {currentTime}</div>
+      <button onClick={timer.start}>Start</button>
+      <button onClick={timer.pause}>Pause</button>
+      <button onClick={() => {
+        timer.reset({
+          startIfWasStopped: true,
+          continueIfWasRunning: true,
+        })
+      }}>Reset</button>
+      <div>isRunning: {String(timer.isRunning)}</div>
+      <div>currentTime: {timer.currentTime}</div>
 
       <h1>Stateless Timer</h1>
       <button onClick={statelessTimer.start}>Start</button>
