@@ -31,6 +31,76 @@ const convertMsToUnit = (time: number, timeUnit: TTimeUnit) => {
   }
 }
 
+const useStopwatch = (
+  {
+    initialTime = 0,
+    autostart,
+    onPause,
+    onStart,
+    onReset,
+  }: {
+    initialTime?: number
+    autostart?: boolean
+    onPause?: (currentTime: number) => void
+    onStart?: (currentTime: number) => void
+    onReset?: (currentTime: number) => void
+  }) => {
+  const timerRef = useRef<number | null>(null)
+
+  const convertedInitialTime = convertTime(initialTime, 'sec')
+  const getReturningTime = (returningTime: number) => convertMsToUnit(returningTime, 'sec')
+
+  const [currentTime, setCurrentTime] = useState(convertedInitialTime)
+  const [isRunning, setIsRunning] = useState(!!autostart)
+
+  const stopTimer = () => {
+    if (!timerRef.current) return
+
+    setIsRunning(false)
+
+    clearInterval(timerRef.current)
+    timerRef.current = null
+  }
+
+  useEffect(() => {
+    autostart && start()
+  }, [])
+
+  const start = () => {
+    if (timerRef.current) return
+
+    onStart && onStart(getReturningTime(currentTime))
+
+    setIsRunning(true)
+
+    timerRef.current = setInterval(() => {
+      setCurrentTime(prev => prev + 1000)
+    }, 1000)
+  }
+
+  const reset = () => {
+    onReset && onReset(getReturningTime(convertedInitialTime))
+
+    stopTimer()
+    setCurrentTime(convertedInitialTime)
+  }
+
+  const pause = () => {
+    if (!timerRef.current) return
+
+    stopTimer()
+    onPause && onPause(getReturningTime(currentTime))
+  }
+
+  return {
+    start,
+    pause,
+    reset,
+    isRunning,
+    currentTime: getReturningTime(currentTime),
+  }
+}
+
 const useTimer = (
   initialTime: number,
   {
@@ -55,7 +125,7 @@ const useTimer = (
 
   const convertedInitialTime = convertTime(initialTime, timeUnit)
   const getReturningTime = (returningTime: number) => convertMsToUnit(returningTime, 'sec')
-  
+
   const [currentTime, setCurrentTime] = useState(convertedInitialTime)
   const [isRunning, setIsRunning] = useState(!!autostart)
 
@@ -204,21 +274,36 @@ function App() {
     onEnd: () => console.log('end')
   })
 
+  const stopwatch = useStopwatch({
+    // autostart: true,
+    initialTime: 5,
+    onPause: (time) => console.log('pause: ' + time),
+    onStart: (time) => console.log('start: ' + time),
+    onReset: (time) => console.log('reset: ' + time),
+  })
+
   console.log('component updated...')
 
   return (
     <div>
-      <h1>Timer 1</h1>
+      <h1>Timer</h1>
       <button onClick={start}>Start</button>
       <button onClick={pause}>Pause</button>
       <button onClick={reset}>Reset</button>
       <div>isRunning: {String(isRunning)}</div>
-      <div>{currentTime}</div>
+      <div>currentTime: {currentTime}</div>
 
-      <h1>Stateless Timer 2</h1>
+      <h1>Stateless Timer</h1>
       <button onClick={statelessTimer.start}>Start</button>
       <button onClick={statelessTimer.cancel}>Cancel</button>
       <div>isRunning: {String(statelessTimer.isRunning)}</div>
+
+      <h1>Stopwatch</h1>
+      <button onClick={stopwatch.start}>Start</button>
+      <button onClick={stopwatch.pause}>Pause</button>
+      <button onClick={stopwatch.reset}>Reset</button>
+      <div>isRunning: {String(stopwatch.isRunning)}</div>
+      <div>currentTime: {stopwatch.currentTime}</div>
     </div>
   )
 }
