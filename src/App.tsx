@@ -1,23 +1,62 @@
 import { useEffect, useRef, useState } from 'react'
 
-const useTimer = (initialTime: number, {
-  autostart,
-  speedUpFirstSecond,
-  onPause,
-  onStart,
-  onReset,
-  onEnd,
-}: {
-  autostart?: boolean
-  speedUpFirstSecond?: boolean,
-  onPause?: (currentTime: number) => void
-  onStart?: (currentTime: number) => void
-  onReset?: (currentTime: number) => void
-  onEnd?: () => void
-}) => {
+type TTimeUnit = 'ms' | 'sec' | 'min' | 'hour' | 'day'
+
+const convertTime = (time: number, timeUnit: TTimeUnit) => {
+  switch (timeUnit) {
+    case 'ms':
+      return time
+    case 'sec':
+      return time * 1_000
+    case 'min':
+      return time * 60_000
+    case 'hour':
+      return time * 3_600_000
+    case 'day':
+      return time * 86_400_000
+  }
+}
+const convertMsToUnit = (time: number, timeUnit: TTimeUnit) => {
+  switch (timeUnit) {
+    case 'ms':
+      return time
+    case 'sec':
+      return time / 1_000
+    case 'min':
+      return time / 60_000
+    case 'hour':
+      return time / 3_600_000
+    case 'day':
+      return time / 86_400_000
+  }
+}
+
+const useTimer = (
+  initialTime: number,
+  {
+    autostart,
+    speedUpFirstSecond,
+    onPause,
+    onStart,
+    onReset,
+    onEnd,
+    timeUnit = 'sec',
+  }: {
+    autostart?: boolean
+    speedUpFirstSecond?: boolean,
+    onPause?: (currentTime: number) => void
+    onStart?: (currentTime: number) => void
+    onReset?: (currentTime: number) => void
+    onEnd?: () => void
+    timeUnit?: Exclude<TTimeUnit, 'ms'>
+  }) => {
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
-  const [currentTime, setCurrentTime] = useState(initialTime)
+
+  const convertedInitialTime = convertTime(initialTime, timeUnit)
+  const getReturningTime = (returningTime: number) => convertMsToUnit(returningTime, 'sec')
+  
+  const [currentTime, setCurrentTime] = useState(convertedInitialTime)
   const [isRunning, setIsRunning] = useState(!!autostart)
 
   const stopTimer = () => {
@@ -48,58 +87,64 @@ const useTimer = (initialTime: number, {
   const start = () => {
     if (timerRef.current || firstTickRef.current || currentTime === 0) return
 
-    onStart && onStart(currentTime)
+    onStart && onStart(getReturningTime(currentTime))
 
     setIsRunning(true)
 
     firstTickRef.current = setTimeout(() => {
-      const newValue = currentTime - 1
+      const newValue = currentTime - 1000
       setCurrentTime(newValue)
 
       if (newValue === 0) return
 
       timerRef.current = setInterval(() => {
-        setCurrentTime(prev => prev - 1)
+        setCurrentTime(prev => prev - 1000)
       }, 1000)
     }, speedUpFirstSecond ? 300 : 1000)
   }
 
   const reset = () => {
-    onReset && onReset(initialTime)
+    onReset && onReset(getReturningTime(convertedInitialTime))
 
     stopTimer()
-    setCurrentTime(initialTime)
+    setCurrentTime(convertedInitialTime)
   }
 
   const pause = () => {
     if (!firstTickRef.current) return
 
     stopTimer()
-    onPause && onPause(currentTime)
+    onPause && onPause(getReturningTime(currentTime))
   }
 
   return {
     start,
     pause,
     reset,
-    currentTime,
+    currentTime: getReturningTime(currentTime),
     isRunning,
   }
 }
 
-const useStatelessTimer = (initialTime: number, {
-  autostart,
-  onStart,
-  onCancel,
-  onEnd,
-}: {
-  autostart?: boolean
-  onStart?: () => void
-  onCancel?: () => void
-  onEnd?: () => void
-}) => {
+const useStatelessTimer = (
+  initialTime: number,
+  {
+    autostart,
+    onStart,
+    onCancel,
+    onEnd,
+    timeUnit = 'sec'
+  }: {
+    autostart?: boolean
+    onStart?: () => void
+    onCancel?: () => void
+    onEnd?: () => void
+    timeUnit?: TTimeUnit
+  }) => {
   const timerRef = useRef<number | null>(null)
   const [isRunning, setIsRunning] = useState(!!autostart)
+
+  const convertedInitialTime = convertTime(initialTime, timeUnit)
 
   useEffect(() => {
     autostart && start()
@@ -107,7 +152,7 @@ const useStatelessTimer = (initialTime: number, {
 
   const stopTimer = () => {
     if (!timerRef.current) return
-    
+
     setIsRunning(false)
     clearInterval(timerRef.current)
     timerRef.current = null
@@ -123,7 +168,7 @@ const useStatelessTimer = (initialTime: number, {
     timerRef.current = setTimeout(() => {
       onEnd && onEnd()
       stopTimer()
-    }, initialTime * 1000)
+    }, convertedInitialTime)
   }
 
   const cancel = () => {
@@ -141,9 +186,10 @@ const useStatelessTimer = (initialTime: number, {
 }
 
 function App() {
-  const { start, pause, reset, currentTime, isRunning } = useTimer(3, {
+  const { start, pause, reset, currentTime, isRunning } = useTimer(1, {
     // autostart: true,
     speedUpFirstSecond: false,
+    // timeUnit: 'min',
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
@@ -152,6 +198,7 @@ function App() {
 
   const statelessTimer = useStatelessTimer(3, {
     // autostart: true,
+    // timeUnit: 'min',
     onStart: () => console.log('start'),
     onCancel: () => console.log('cancel'),
     onEnd: () => console.log('end')
