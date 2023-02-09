@@ -81,13 +81,23 @@ const useStopwatch = (
     timerRef.current = setInterval(() => {
       setCurrentTime(prev => prev + 1000)
     }, 1000)
+
   }
 
-  const reset = () => {
+  const reset = (resetSettings?: IResetSettings) => {
+    const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
+
     onReset && onReset(getReturningTime(convertedInitialTime))
 
-    stopTimer()
-    setCurrentTime(convertedInitialTime)
+    if (continueIfWasRunning && isRunning) {
+      setCurrentTime(convertedInitialTime)
+    } else if (startIfWasStopped && !isRunning) {
+      setTimeout(() => setCurrentTime(convertedInitialTime), 0)
+      start()
+    } else {
+      stopTimer()
+      setCurrentTime(convertedInitialTime)
+    }
   }
 
   const pause = () => {
@@ -293,7 +303,7 @@ function App() {
 
   const stopwatch = useStopwatch({
     // autostart: true,
-    initialTime: 5,
+    // initialTime: 5,
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
@@ -308,8 +318,8 @@ function App() {
       <button onClick={timer.pause}>Pause</button>
       <button onClick={() => {
         timer.reset({
-          startIfWasStopped: true,
-          continueIfWasRunning: true,
+          startIfWasStopped: false,
+          continueIfWasRunning: false,
         })
       }}>Reset</button>
       <div>isRunning: {String(timer.isRunning)}</div>
@@ -323,7 +333,12 @@ function App() {
       <h1>Stopwatch</h1>
       <button onClick={stopwatch.start}>Start</button>
       <button onClick={stopwatch.pause}>Pause</button>
-      <button onClick={stopwatch.reset}>Reset</button>
+      <button onClick={() => {
+        stopwatch.reset({
+          startIfWasStopped: false,
+          continueIfWasRunning: false,
+        })
+      }}>Reset</button>
       <div>isRunning: {String(stopwatch.isRunning)}</div>
       <div>currentTime: {stopwatch.currentTime}</div>
     </div>
