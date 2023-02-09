@@ -62,12 +62,14 @@ const useStopwatch = (
     onPause,
     onStart,
     onReset,
+    onUpdate,
   }: {
     initialTime?: number
     autostart?: boolean
     onPause?: (currentTime: number) => void
     onStart?: (currentTime: number) => void
     onReset?: (currentTime: number) => void
+    onUpdate?: (currentTime: number) => void
   }) => {
   const timerRef = useRef<number | null>(null)
 
@@ -75,6 +77,7 @@ const useStopwatch = (
 
   const [currentTime, setCurrentTime] = useState(convertedInitialTime)
   const [isRunning, setIsRunning] = useState(!!autostart)
+  const [justRendered, setJustRendered] = useState(true)
 
   const stopTimer = () => {
     if (!timerRef.current) return
@@ -88,6 +91,12 @@ const useStopwatch = (
   useEffect(() => {
     autostart && start()
   }, [])
+
+  useEffect(() => {
+    if (justRendered) return setJustRendered(false)
+
+    onUpdate && onUpdate(convertMsToSec(currentTime))
+  }, [currentTime])
 
   const start = () => {
     if (timerRef.current) return
@@ -142,6 +151,7 @@ const useTimer = (
     onPause,
     onStart,
     onReset,
+    onUpdate,
     onEnd,
     timeUnit = 'sec',
   }: {
@@ -150,6 +160,7 @@ const useTimer = (
     onPause?: (currentTime: number) => void
     onStart?: (currentTime: number) => void
     onReset?: (currentTime: number) => void
+    onUpdate?: (currentTime: number) => void
     onEnd?: () => void
     timeUnit?: Exclude<TTimeUnit, 'ms'>
   }) => {
@@ -160,6 +171,7 @@ const useTimer = (
 
   const [currentTime, setCurrentTime] = useState(convertedInitialTime)
   const [isRunning, setIsRunning] = useState(!!autostart)
+  const [justRendered, setJustRendered] = useState(true)
 
   const stopTimer = () => {
     if (!firstTickRef.current) return
@@ -180,10 +192,14 @@ const useTimer = (
   }, [])
 
   useEffect(() => {
-    if (currentTime !== 0) return
+    if (justRendered) return setJustRendered(false)
+    
+    if (currentTime === 0) {
+      onEnd && onEnd()
+      stopTimer()
+    } 
 
-    onEnd && onEnd()
-    stopTimer()
+    onUpdate && onUpdate(convertMsToSec(currentTime))
   }, [currentTime])
 
   const start = (startSettings?: { withTime: number }) => {
@@ -301,13 +317,14 @@ const useStatelessTimer = (
 }
 
 function App() {
-  const timer = useTimer(new Date('02.22.2024'), {
+  const timer = useTimer(10, {
     // autostart: true,
     speedUpFirstSecond: false,
     // timeUnit: 'min',
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
+    onUpdate: (time) => console.log(time),
     onEnd: () => console.log('end')
   })
 
@@ -325,6 +342,7 @@ function App() {
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
+    onUpdate: (time) => console.log(time),
   })
 
   return (
