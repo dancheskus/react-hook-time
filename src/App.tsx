@@ -7,7 +7,7 @@ const parseDate = (input: string | Date) => {
   return isNaN(date.getTime()) ? undefined : date.getTime() - Date.now()
 }
 
-const convertTime = (time: number | string | Date, timeUnit: TTimeUnit) => {
+const convertTimeToMs = (time: number | string | Date, timeUnit: TTimeUnit) => {
   const isDate = typeof time !== 'number'
   const convertedTime = isDate ? parseDate(time) : time
 
@@ -30,7 +30,7 @@ const convertTime = (time: number | string | Date, timeUnit: TTimeUnit) => {
 }
 const convertMsToSec = (milliseconds: number) => milliseconds / 1_000
 
-const convertMsToTime = (milliseconds: number) => {
+const convertMsToTimeObj = (milliseconds: number) => {
   const totalSeconds = milliseconds / 1_000;
   const totalMinutes = totalSeconds / 60;
   const totalHours = totalMinutes / 60;
@@ -51,8 +51,9 @@ const convertMsToTime = (milliseconds: number) => {
 }
 
 interface IResetSettings {
-  startIfWasStopped: boolean
-  continueIfWasRunning: boolean
+  startIfWasStopped?: boolean
+  continueIfWasRunning?: boolean
+  updateTime?: number | {time: number; timeUnit: TTimeUnit}
 }
 
 const useStopwatch = (
@@ -73,7 +74,7 @@ const useStopwatch = (
   }) => {
   const timerRef = useRef<number | null>(null)
 
-  const convertedInitialTime = convertTime(initialTime, 'sec')
+  const convertedInitialTime = convertTimeToMs(initialTime, 'sec')
 
   const [currentTime, setCurrentTime] = useState(convertedInitialTime)
   const [isRunning, setIsRunning] = useState(!!autostart)
@@ -167,9 +168,9 @@ const useTimer = (
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
 
-  const convertedInitialTime = convertTime(initialTime, timeUnit)
+  const [convertedInitialTimeInMs, setConvertedInitialTimeInMs] = useState(convertTimeToMs(initialTime, timeUnit))
 
-  const [currentTime, setCurrentTime] = useState(convertedInitialTime)
+  const [currentTime, setCurrentTime] = useState(convertedInitialTimeInMs)
   const [isRunning, setIsRunning] = useState(!!autostart)
   const [justRendered, setJustRendered] = useState(true)
 
@@ -226,17 +227,27 @@ const useTimer = (
   }
 
   const reset = (resetSettings?: IResetSettings) => {
-    const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
+    const { startIfWasStopped, continueIfWasRunning, updateTime } = resetSettings || {}
 
-    onReset && onReset(convertMsToSec(convertedInitialTime))
+    let updatedTime = convertedInitialTimeInMs
+
+    if (updateTime) {
+      const isNumber = typeof updateTime === 'number'
+      
+      updatedTime = convertTimeToMs(isNumber ? updateTime : updateTime.time, isNumber ? 'sec' : updateTime.timeUnit)
+
+      setConvertedInitialTimeInMs(updatedTime)
+    }
+
+    onReset && onReset(convertMsToSec(updatedTime))
 
     if (continueIfWasRunning && isRunning) {
-      setCurrentTime(convertedInitialTime)
+      setCurrentTime(updatedTime)
     } else if (startIfWasStopped && !isRunning) {
-      start({ withTime: convertedInitialTime })
+      start({ withTime: updatedTime })
     } else {
       stopTimer()
-      setCurrentTime(convertedInitialTime)
+      setCurrentTime(updatedTime)
     }
   }
 
@@ -253,7 +264,7 @@ const useTimer = (
     reset,
     currentTime: convertMsToSec(currentTime),
     isRunning,
-    formattedCurrentTime: convertMsToTime(currentTime)
+    formattedCurrentTime: convertMsToTimeObj(currentTime)
   }
 }
 
@@ -275,7 +286,7 @@ const useStatelessTimer = (
   const timerRef = useRef<number | null>(null)
   const [isRunning, setIsRunning] = useState(!!autostart)
 
-  const convertedInitialTime = convertTime(initialTime, timeUnit)
+  const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
 
   useEffect(() => {
     autostart && start()
@@ -355,7 +366,9 @@ function App() {
           startIfWasStopped: false,
           continueIfWasRunning: false,
         })
-      }}>Reset</button>
+      }}>
+        Reset
+      </button>
       <div>isRunning: {String(timer.isRunning)}</div>
       <div>currentTime: {timer.currentTime}</div>
       <div>
@@ -365,6 +378,26 @@ function App() {
         <div>Minutes: {timer.formattedCurrentTime.minutes}</div>
         <div>Seconds: {timer.formattedCurrentTime.seconds}</div>
       </div>
+      <button>Add 10 second</button>
+      <button>Remove 5 second</button>
+      <button onClick={() => {
+        timer.reset({
+          updateTime: { time: 20, timeUnit: 'min' },
+          startIfWasStopped: false,
+          continueIfWasRunning: true,
+        })
+      }}>
+        Update time to 20 minutes
+      </button>
+      <button onClick={() => {
+        timer.reset({
+          updateTime: 20,
+          startIfWasStopped: false,
+          continueIfWasRunning: false,
+        })
+      }}>
+        Update time to 20 seconds
+      </button>
 
       <h1>Stateless Timer</h1>
       <button onClick={statelessTimer.start}>Start</button>
