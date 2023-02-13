@@ -62,6 +62,7 @@ const useStopwatch = (
     onPause,
     onStart,
     onReset,
+    onTimeSet,
     onUpdate,
   }: {
     initialTime?: number
@@ -69,6 +70,7 @@ const useStopwatch = (
     onPause?: (currentTime: number) => void
     onStart?: (currentTime: number) => void
     onReset?: (currentTime: number) => void
+    onTimeSet?: (currentTime: number) => void
     onUpdate?: (currentTime: number) => void
   }) => {
   const timerRef = useRef<number | null>(null)
@@ -111,20 +113,56 @@ const useStopwatch = (
 
   }
 
+  const updateTime = ({ updatedTime, continueIfWasRunning, startIfWasStopped }: { updatedTime: number } & IUpdateTimeSettings) => {
+    if (continueIfWasRunning && isRunning) {
+      setCurrentTime(updatedTime)
+    } else if (startIfWasStopped && !isRunning) {
+      setTimeout(() => setCurrentTime(updatedTime), 0)
+      start()
+    } else {
+      stopTimer()
+      setCurrentTime(updatedTime)
+    }
+  }
+
+  const setTime = (newTime: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    const updatedTime = convertTimeToMs(newTime, timeUnit)
+
+    onTimeSet && onTimeSet(convertMsToSec(updatedTime))
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
+  const incTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    const updatedTime = currentTime + convertTimeToMs(timeAmount, timeUnit)
+
+    console.log(updatedTime)
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
+  const decTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    let updatedTime = currentTime - convertTimeToMs(timeAmount, timeUnit)
+
+    if (updatedTime < 0) {
+      updatedTime = 0
+    }
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
   const reset = (resetSettings?: IUpdateTimeSettings) => {
     const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
 
     onReset && onReset(convertMsToSec(convertedInitialTime))
 
-    if (continueIfWasRunning && isRunning) {
-      setCurrentTime(convertedInitialTime)
-    } else if (startIfWasStopped && !isRunning) {
-      setTimeout(() => setCurrentTime(convertedInitialTime), 0)
-      start()
-    } else {
-      stopTimer()
-      setCurrentTime(convertedInitialTime)
-    }
+    updateTime({ updatedTime: convertedInitialTime, continueIfWasRunning, startIfWasStopped })
   }
 
   const pause = () => {
@@ -138,6 +176,9 @@ const useStopwatch = (
     start,
     pause,
     reset,
+    setTime,
+    incTimeBy,
+    decTimeBy,
     isRunning,
     currentTime: convertMsToSec(currentTime),
     formattedCurrentTime: convertMsToTimeObj(currentTime)
@@ -301,8 +342,8 @@ const useTimer = (
     setTime,
     incTimeBy,
     decTimeBy,
-    currentTime: convertMsToSec(currentTime),
     isRunning,
+    currentTime: convertMsToSec(currentTime),
     formattedCurrentTime: convertMsToTimeObj(currentTime)
   }
 }
@@ -465,6 +506,30 @@ function App() {
         <div>Minutes: {stopwatch.formattedCurrentTime.minutes}</div>
         <div>Seconds: {stopwatch.formattedCurrentTime.seconds}</div>
       </div>
+      <button onClick={() => stopwatch.incTimeBy(10)}>Add 10 second</button>
+      <button onClick={() => stopwatch.incTimeBy(2, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: false,
+      })}>Add 2 minutes</button>
+      <button onClick={() => stopwatch.decTimeBy(5)}>Remove 5 second</button>
+      <button onClick={() => stopwatch.decTimeBy(1, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: true,
+      })}>Remove 1 minute</button>
+      <button onClick={() => stopwatch.setTime(20, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: false,
+      })}>
+        Update time to 20 minutes
+      </button>
+
+      <button onClick={() => stopwatch.setTime(20)}>
+        Update time to 20 seconds
+      </button>
+
     </div>
   )
 }
