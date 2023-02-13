@@ -140,6 +140,7 @@ const useStopwatch = (
     reset,
     isRunning,
     currentTime: convertMsToSec(currentTime),
+    formattedCurrentTime: convertMsToTimeObj(currentTime)
   }
 }
 
@@ -457,6 +458,13 @@ function App() {
       }}>Reset</button>
       <div>isRunning: {String(stopwatch.isRunning)}</div>
       <div>currentTime: {stopwatch.currentTime}</div>
+      <div>
+        <div>Years: {stopwatch.formattedCurrentTime.years}</div>
+        <div>Days: {stopwatch.formattedCurrentTime.days}</div>
+        <div>Hours: {stopwatch.formattedCurrentTime.hours}</div>
+        <div>Minutes: {stopwatch.formattedCurrentTime.minutes}</div>
+        <div>Seconds: {stopwatch.formattedCurrentTime.seconds}</div>
+      </div>
     </div>
   )
 }
