@@ -14,7 +14,7 @@ const convertTimeToMs = (time: number | string | Date, timeUnit: TTimeUnit) => {
   if (typeof convertedTime !== 'number') return 0
 
   if (isDate) return convertedTime
-  
+
   switch (timeUnit) {
     case 'ms':
       return convertedTime
@@ -45,15 +45,14 @@ const convertMsToTimeObj = (milliseconds: number) => {
   const remainingMinutes = (remainingHours - hours) * 60;
   const minutes = Math.floor(remainingMinutes);
   const remainingSeconds = (remainingMinutes - minutes) * 60;
-  const seconds = Math.floor(remainingSeconds);
+  const seconds = Math.round(remainingSeconds);
 
   return { years, days, hours, minutes, seconds };
-}
+};
 
-interface IResetSettings {
+interface IUpdateTimeSettings {
   startIfWasStopped?: boolean
   continueIfWasRunning?: boolean
-  updateTime?: number | {time: number; timeUnit: TTimeUnit}
 }
 
 const useStopwatch = (
@@ -112,7 +111,7 @@ const useStopwatch = (
 
   }
 
-  const reset = (resetSettings?: IResetSettings) => {
+  const reset = (resetSettings?: IUpdateTimeSettings) => {
     const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
 
     onReset && onReset(convertMsToSec(convertedInitialTime))
@@ -144,8 +143,10 @@ const useStopwatch = (
   }
 }
 
+type TTimerInitialTime = number | string | Date
+
 const useTimer = (
-  initialTime: number | string | Date,
+  initialTime: TTimerInitialTime,
   {
     autostart,
     speedUpFirstSecond,
@@ -153,6 +154,7 @@ const useTimer = (
     onStart,
     onReset,
     onUpdate,
+    onTimeSet,
     onEnd,
     timeUnit = 'sec',
   }: {
@@ -161,6 +163,7 @@ const useTimer = (
     onPause?: (currentTime: number) => void
     onStart?: (currentTime: number) => void
     onReset?: (currentTime: number) => void
+    onTimeSet?: (currentTime: number) => void
     onUpdate?: (currentTime: number) => void
     onEnd?: () => void
     timeUnit?: Exclude<TTimeUnit, 'ms'>
@@ -194,11 +197,11 @@ const useTimer = (
 
   useEffect(() => {
     if (justRendered) return setJustRendered(false)
-    
+
     if (currentTime === 0) {
       onEnd && onEnd()
       stopTimer()
-    } 
+    }
 
     onUpdate && onUpdate(convertMsToSec(currentTime))
   }, [currentTime])
@@ -226,21 +229,7 @@ const useTimer = (
     }, speedUpFirstSecond ? 300 : 1000)
   }
 
-  const reset = (resetSettings?: IResetSettings) => {
-    const { startIfWasStopped, continueIfWasRunning, updateTime } = resetSettings || {}
-
-    let updatedTime = convertedInitialTimeInMs
-
-    if (updateTime) {
-      const isNumber = typeof updateTime === 'number'
-      
-      updatedTime = convertTimeToMs(isNumber ? updateTime : updateTime.time, isNumber ? 'sec' : updateTime.timeUnit)
-
-      setConvertedInitialTimeInMs(updatedTime)
-    }
-
-    onReset && onReset(convertMsToSec(updatedTime))
-
+  const updateTime = ({ updatedTime, continueIfWasRunning, startIfWasStopped }: { updatedTime: number } & IUpdateTimeSettings) => {
     if (continueIfWasRunning && isRunning) {
       setCurrentTime(updatedTime)
     } else if (startIfWasStopped && !isRunning) {
@@ -249,6 +238,52 @@ const useTimer = (
       stopTimer()
       setCurrentTime(updatedTime)
     }
+  }
+
+  const setTime = (newTime: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    const updatedTime = convertTimeToMs(newTime, timeUnit)
+
+    onTimeSet && onTimeSet(convertMsToSec(updatedTime))
+
+    setConvertedInitialTimeInMs(updatedTime)
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
+  const incTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    const updatedTime = currentTime + convertTimeToMs(timeAmount, timeUnit)
+
+    console.log(updatedTime)
+
+    setConvertedInitialTimeInMs(updatedTime)
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
+  const decTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => {
+    const { timeUnit = 'sec', continueIfWasRunning, startIfWasStopped } = setTimeSettings || {}
+
+    let updatedTime = currentTime - convertTimeToMs(timeAmount, timeUnit)
+
+    if (updatedTime < 0) {
+      updatedTime = 0
+    }
+
+    setConvertedInitialTimeInMs(updatedTime)
+
+    updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
+  }
+
+  const reset = (resetSettings?: IUpdateTimeSettings) => {
+    const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
+
+    onReset && onReset(convertMsToSec(convertedInitialTimeInMs))
+
+    updateTime({ updatedTime: convertedInitialTimeInMs, continueIfWasRunning, startIfWasStopped })
   }
 
   const pause = () => {
@@ -262,6 +297,9 @@ const useTimer = (
     start,
     pause,
     reset,
+    setTime,
+    incTimeBy,
+    decTimeBy,
     currentTime: convertMsToSec(currentTime),
     isRunning,
     formattedCurrentTime: convertMsToTimeObj(currentTime)
@@ -335,6 +373,7 @@ function App() {
     onPause: (time) => console.log('pause: ' + time),
     onStart: (time) => console.log('start: ' + time),
     onReset: (time) => console.log('reset: ' + time),
+    onTimeSet: (time) => console.log('time was set: ' + time),
     onUpdate: (time) => console.log(time),
     onEnd: () => console.log('end')
   })
@@ -378,24 +417,27 @@ function App() {
         <div>Minutes: {timer.formattedCurrentTime.minutes}</div>
         <div>Seconds: {timer.formattedCurrentTime.seconds}</div>
       </div>
-      <button>Add 10 second</button>
-      <button>Remove 5 second</button>
-      <button onClick={() => {
-        timer.reset({
-          updateTime: { time: 20, timeUnit: 'min' },
-          startIfWasStopped: false,
-          continueIfWasRunning: true,
-        })
-      }}>
+      <button onClick={() => timer.incTimeBy(10)}>Add 10 second</button>
+      <button onClick={() => timer.incTimeBy(2, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: false,
+      })}>Add 2 minutes</button>
+      <button onClick={() => timer.decTimeBy(5)}>Remove 5 second</button>
+      <button onClick={() => timer.decTimeBy(1, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: false,
+      })}>Remove 1 minute</button>
+      <button onClick={() => timer.setTime(20, {
+        timeUnit: 'min',
+        startIfWasStopped: false,
+        continueIfWasRunning: false,
+      })}>
         Update time to 20 minutes
       </button>
-      <button onClick={() => {
-        timer.reset({
-          updateTime: 20,
-          startIfWasStopped: false,
-          continueIfWasRunning: false,
-        })
-      }}>
+
+      <button onClick={() => timer.setTime(20)}>
         Update time to 20 seconds
       </button>
 
