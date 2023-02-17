@@ -1,4 +1,4 @@
-import { useStatelessTimer, useStopwatch, useTimer } from 'ReactTimer'
+import { useStatelessTimer, useStopwatch, useTimer } from './ReactTimer'
 
 export default function App() {
   const timer = useTimer(10, {
