@@ -65,20 +65,10 @@ export default function useTimer(
     onUpdate && onUpdate(convertMsToSec(currentTime))
   }, [currentTime])
 
-  const start = (startSettings?: { withTime: number }) => {
-    const { withTime } = startSettings || {}
-
-    if (timerRef.current || firstTickRef.current || (!withTime && currentTime === 0)) return
-
-    onStart && onStart(convertMsToSec(currentTime))
-
-    setIsRunning(true)
-
-    withTime && setCurrentTime(withTime)
-
+  const enableSetTimeout = (time: number) => {
     firstTickRef.current = setTimeout(
       () => {
-        const newValue = (withTime || currentTime) - 1000
+        const newValue = time - 1000
         setCurrentTime(newValue)
 
         if (newValue === 0) return
@@ -91,6 +81,28 @@ export default function useTimer(
     )
   }
 
+  const startWithTime = (time: number) => {
+    if (timerRef.current || firstTickRef.current) return
+
+    onStart && onStart(convertMsToSec(currentTime))
+
+    setIsRunning(true)
+
+    setCurrentTime(time)
+
+    enableSetTimeout(time)
+  }
+
+  const start = () => {
+    if (timerRef.current || firstTickRef.current || currentTime === 0) return
+
+    onStart && onStart(convertMsToSec(currentTime))
+
+    setIsRunning(true)
+
+    enableSetTimeout(currentTime)
+  }
+
   const updateTime = ({
     updatedTime,
     continueIfWasRunning,
@@ -99,7 +111,7 @@ export default function useTimer(
     if (continueIfWasRunning && isRunning) {
       setCurrentTime(updatedTime)
     } else if (startIfWasStopped && !isRunning) {
-      start({ withTime: updatedTime })
+      startWithTime(updatedTime)
     } else {
       stopTimer()
       setCurrentTime(updatedTime)
