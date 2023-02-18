@@ -12,6 +12,7 @@ export default function useStopwatch({
   onReset,
   onTimeSet,
   onUpdate,
+  stepInMs = 1000,
 }: {
   initialTime?: number
   autostart?: boolean
@@ -20,6 +21,7 @@ export default function useStopwatch({
   onReset?: (currentTime: number) => void
   onTimeSet?: (currentTime: number) => void
   onUpdate?: (currentTime: number) => void
+  stepInMs?: number
 }) {
   const timerRef = useRef<number | null>(null)
 
@@ -57,7 +59,7 @@ export default function useStopwatch({
 
     timerRef.current = setInterval(() => {
       setCurrentTime(prev => prev + 1000)
-    }, 1000)
+    }, stepInMs)
   }
 
   const updateTime = ({

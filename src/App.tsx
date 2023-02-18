@@ -3,8 +3,9 @@ import { useStatelessTimer, useStopwatch, useTimer } from './ReactTimer'
 export default function App() {
   const timer = useTimer(10, {
     // autostart: true,
-    speedUpFirstSecond: false,
+    // speedUpFirstSecond: true,
     // timeUnit: 'min',
+    // stepInMs: 2000,
     onPause: time => console.log('pause: ' + time),
     onStart: time => console.log('start: ' + time),
     onReset: time => console.log('reset: ' + time),
@@ -24,6 +25,7 @@ export default function App() {
   const stopwatch = useStopwatch({
     // autostart: true,
     // initialTime: 5,
+    // stepInMs: 500,
     onPause: time => console.log('pause: ' + time),
     onStart: time => console.log('start: ' + time),
     onReset: time => console.log('reset: ' + time),

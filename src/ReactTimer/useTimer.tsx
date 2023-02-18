@@ -15,6 +15,7 @@ export default function useTimer(
     onTimeSet,
     onEnd,
     timeUnit = 'sec',
+    stepInMs = 1000,
   }: {
     autostart?: boolean
     speedUpFirstSecond?: boolean
@@ -25,6 +26,7 @@ export default function useTimer(
     onUpdate?: (currentTime: number) => void
     onEnd?: () => void
     timeUnit?: Exclude<TTimeUnit, 'ms'>
+    stepInMs?: number
   },
 ) {
   const timerRef = useRef<number | null>(null)
@@ -75,9 +77,9 @@ export default function useTimer(
 
         timerRef.current = setInterval(() => {
           setCurrentTime(prev => prev - 1000)
-        }, 1000)
+        }, stepInMs)
       },
-      speedUpFirstSecond ? 300 : 1000,
+      speedUpFirstSecond ? 300 : stepInMs,
     )
   }
 
