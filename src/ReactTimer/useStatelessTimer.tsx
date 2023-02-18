@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 
 import { TTimeUnit } from './types'
 import useOnMount from './useOnMount'
+import useOnUnmount from './useOnUnmount'
 import { convertTimeToMs } from './utils'
 
 interface IUseStatelessTimer {
@@ -12,18 +13,13 @@ interface IUseStatelessTimer {
   timeUnit?: TTimeUnit
 }
 
-export default function useStatelessTimer(
-  initialTime: number,
-  { autostart, onStart, onCancel, onEnd, timeUnit = 'sec' }: IUseStatelessTimer,
-) {
+export default function useStatelessTimer(initialTime: number, settings?: IUseStatelessTimer) {
+  const { autostart, onStart, onCancel, onEnd, timeUnit = 'sec' } = settings || {}
+
   const timerRef = useRef<number | null>(null)
   const [isRunning, setIsRunning] = useState(!!autostart)
 
   const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
-
-  useOnMount(() => {
-    autostart && start()
-  })
 
   const stopTimer = () => {
     if (!timerRef.current) return
@@ -45,6 +41,10 @@ export default function useStatelessTimer(
       stopTimer()
     }, convertedInitialTime)
   }
+
+  useOnMount(() => autostart && start())
+
+  useOnUnmount(stopTimer)
 
   const cancel = () => {
     if (!timerRef.current) return

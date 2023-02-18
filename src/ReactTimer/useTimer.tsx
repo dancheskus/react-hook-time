@@ -1,11 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { IUpdateTimeSettings, TTimerInitialTime, TTimeUnit } from './types'
+import useOnMount from './useOnMount'
+import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
-export default function useTimer(
-  initialTime: TTimerInitialTime,
-  {
+interface ITimer {
+  autostart?: boolean
+  speedUpFirstSecond?: boolean
+  onPause?: (currentTime: number) => void
+  onStart?: (currentTime: number) => void
+  onReset?: (currentTime: number) => void
+  onTimeSet?: (currentTime: number) => void
+  onUpdate?: (currentTime: number) => void
+  onEnd?: () => void
+  timeUnit?: Exclude<TTimeUnit, 'ms'>
+  stepInMs?: number
+}
+
+export default function useTimer(initialTime: TTimerInitialTime, settings?: ITimer) {
+  const {
     autostart,
     speedUpFirstSecond,
     onPause,
@@ -16,19 +30,8 @@ export default function useTimer(
     onEnd,
     timeUnit = 'sec',
     stepInMs = 1000,
-  }: {
-    autostart?: boolean
-    speedUpFirstSecond?: boolean
-    onPause?: (currentTime: number) => void
-    onStart?: (currentTime: number) => void
-    onReset?: (currentTime: number) => void
-    onTimeSet?: (currentTime: number) => void
-    onUpdate?: (currentTime: number) => void
-    onEnd?: () => void
-    timeUnit?: Exclude<TTimeUnit, 'ms'>
-    stepInMs?: number
-  },
-) {
+  } = settings || {}
+
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
 
@@ -51,10 +54,6 @@ export default function useTimer(
     clearTimeout(firstTickRef.current)
     firstTickRef.current = null
   }
-
-  useEffect(() => {
-    autostart && start()
-  }, [])
 
   useEffect(() => {
     if (justRendered) return setJustRendered(false)
@@ -104,6 +103,10 @@ export default function useTimer(
 
     enableSetTimeout(currentTime)
   }
+
+  useOnMount(() => autostart && start())
+
+  useOnUnmount(stopTimer)
 
   const updateTime = ({
     updatedTime,

@@ -2,18 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 
 import { IUpdateTimeSettings, TTimerInitialTime, TTimeUnit } from './types'
 import useOnMount from './useOnMount'
+import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
-export default function useStopwatch({
-  initialTime = 0,
-  autostart,
-  onPause,
-  onStart,
-  onReset,
-  onTimeSet,
-  onUpdate,
-  stepInMs = 1000,
-}: {
+interface IStopwatch {
   initialTime?: number
   autostart?: boolean
   onPause?: (currentTime: number) => void
@@ -22,7 +14,11 @@ export default function useStopwatch({
   onTimeSet?: (currentTime: number) => void
   onUpdate?: (currentTime: number) => void
   stepInMs?: number
-}) {
+}
+
+export default function useStopwatch(settings?: IStopwatch) {
+  const { initialTime = 0, autostart, onPause, onStart, onReset, onTimeSet, onUpdate, stepInMs = 1000 } = settings || {}
+
   const timerRef = useRef<number | null>(null)
 
   const convertedInitialTime = convertTimeToMs(initialTime, 'sec')
@@ -39,10 +35,6 @@ export default function useStopwatch({
     clearInterval(timerRef.current)
     timerRef.current = null
   }
-
-  useOnMount(() => {
-    autostart && start()
-  })
 
   useEffect(() => {
     if (justRendered) return setJustRendered(false)
@@ -61,6 +53,10 @@ export default function useStopwatch({
       setCurrentTime(prev => prev + 1000)
     }, stepInMs)
   }
+
+  useOnMount(() => autostart && start())
+
+  useOnUnmount(stopTimer)
 
   const updateTime = ({
     updatedTime,
