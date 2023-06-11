@@ -34,12 +34,11 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
 
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
+  const justRenderedRef = useRef(true)
+  const convertedInitialTimeInMsRef = useRef(convertTimeToMs(initialTime, timeUnit))
 
-  const [convertedInitialTimeInMs, setConvertedInitialTimeInMs] = useState(convertTimeToMs(initialTime, timeUnit))
-
-  const [currentTime, setCurrentTime] = useState(convertedInitialTimeInMs)
+  const [currentTime, setCurrentTime] = useState(convertedInitialTimeInMsRef.current)
   const [isRunning, setIsRunning] = useState(!!autostart)
-  const [justRendered, setJustRendered] = useState(true)
 
   const stopTimer = () => {
     if (!firstTickRef.current) return
@@ -56,7 +55,10 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
   }
 
   useEffect(() => {
-    if (justRendered) return setJustRendered(false)
+    if (justRenderedRef.current) {
+      justRenderedRef.current = false
+      return
+    }
 
     if (currentTime === 0) {
       onEnd && onEnd()
@@ -130,7 +132,7 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
 
     onTimeSet && onTimeSet(convertMsToSec(updatedTime))
 
-    setConvertedInitialTimeInMs(updatedTime)
+    convertedInitialTimeInMsRef.current = updatedTime
 
     updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
   }
@@ -143,7 +145,7 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
 
     const updatedTime = currentTime + convertTimeToMs(timeAmount, timeUnit)
 
-    setConvertedInitialTimeInMs(updatedTime)
+    convertedInitialTimeInMsRef.current = updatedTime
 
     updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
   }
@@ -160,7 +162,7 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
       updatedTime = 0
     }
 
-    setConvertedInitialTimeInMs(updatedTime)
+    convertedInitialTimeInMsRef.current = updatedTime
 
     updateTime({ updatedTime, continueIfWasRunning, startIfWasStopped })
   }
@@ -168,9 +170,9 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
   const reset = (resetSettings?: IUpdateTimeSettings) => {
     const { startIfWasStopped, continueIfWasRunning } = resetSettings || {}
 
-    onReset && onReset(convertMsToSec(convertedInitialTimeInMs))
+    onReset && onReset(convertMsToSec(convertedInitialTimeInMsRef.current))
 
-    updateTime({ updatedTime: convertedInitialTimeInMs, continueIfWasRunning, startIfWasStopped })
+    updateTime({ updatedTime: convertedInitialTimeInMsRef.current, continueIfWasRunning, startIfWasStopped })
   }
 
   const pause = () => {
