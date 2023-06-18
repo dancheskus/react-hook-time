@@ -1,6 +1,5 @@
 TODO:
 
-- Add Readme.md
+- Add full guide to Readme.md
 - Create demo folder with styled page
-- Add "build" script for compiling code to JS and TS library
 - Write tests with RTL
