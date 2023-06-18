@@ -1,6 +1,6 @@
 {
   "name": "react-hook-time",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "type": "module",
   "description": "A React timer library",
   "main": "dist/index.umd.js",
@@ -26,6 +26,10 @@
     "preview": "vite preview",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color",
     "fix": "yarn lint --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dancheskus/react-hook-time"
   },
   "author": "Daniel Shleifman",
   "license": "MIT",
