@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div>
-      <div>Currnet time {currentTime}</div>
+      <div>Current time {currentTime}</div>
       <button onClick={start}>start</button>
       <button onClick={pause}>pause</button>
     </div>
