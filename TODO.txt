@@ -3,9 +3,10 @@ TODO:
 - Add full guide to Readme.md
 - Create demo folder with styled page
 - Write tests with RTL
+- difficult Types import
+  // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'
+- add link to example to readme https://gg66l2.csb.app/
 
 BUGS:
 - update timer time to 1ms and start timer. it goes to negative
 - if time is 0 and you removing 1 second with "Start timer if was stopped" it goes to negative
-- difficult Types import
-  // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'
