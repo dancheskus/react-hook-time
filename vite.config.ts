@@ -3,6 +3,12 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import dts from 'vite-plugin-dts'
 
+const babelPlugins = {
+  plugins: [
+    ['babel-plugin-styled-components', { displayName: true, fileName: false }],
+  ]
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
@@ -23,5 +29,5 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
-  plugins: [react(), dts()],
+  plugins: [react({ babel: babelPlugins }), dts()],
 })
