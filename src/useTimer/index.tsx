@@ -8,6 +8,7 @@ import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 interface ITimerWithoutUpdate {
   preventUpdate?: true
 
+  stopwatch?: never
   autostart?: boolean
   onStart?: () => void
   onCancel?: () => void
@@ -22,8 +23,27 @@ interface ITimerWithoutUpdate {
   stepInMs?: never
 }
 
+interface IStopwatch {
+  stopwatch?: true
+
+  preventUpdate?: never
+  onCancel?: never
+  onEnd?: never
+
+  autostart?: boolean
+  speedUpFirstSecond?: boolean
+  onPause?: (currentTime: number) => void
+  onStart?: (currentTime: number) => void
+  onReset?: (currentTime: number) => void
+  onTimeSet?: (currentTime: number) => void
+  onUpdate?: (currentTime: number) => void
+  timeUnit?: Exclude<TTimeUnit, 'ms'>
+  stepInMs?: number
+}
+
 interface ITimer {
   preventUpdate?: never
+  stopwatch?: never
   onCancel?: never
 
   autostart?: boolean
@@ -56,13 +76,23 @@ type TimerResultWithoutUpdate = {
   isRunning: boolean
 }
 
-export default function useTimer<T extends ITimer | ITimerWithoutUpdate>(
-  initialTime: TTimerInitialTime,
-  settings?: T,
+export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
+  initialTimeOrSettings: TTimerInitialTime | T,
+  settingsOrInitialTime?: T,
 ): T['preventUpdate'] extends true ? TimerResultWithoutUpdate : TimerResultWithUpdate {
+  let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
+  let settings: T = settingsOrInitialTime as T
+
+  if (!['number', 'string'].includes(typeof initialTimeOrSettings) && !(initialTimeOrSettings instanceof Date)) {
+    // if first argument is settings object
+    initialTime = 0
+    settings = initialTimeOrSettings as T
+  }
+
   const {
     autostart,
     preventUpdate,
+    stopwatch,
     speedUpFirstSecond,
     onPause,
     onStart,
@@ -122,7 +152,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate>(
       return
     }
 
-    if (currentTime === 0) {
+    if (!stopwatch && currentTime === 0) {
       onEnd && onEnd()
       stopTimer()
     }
@@ -133,13 +163,13 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate>(
   const enableSetTimeout = (time: number) => {
     firstTickRef.current = setTimeout(
       () => {
-        const newValue = time - 1000
+        const newValue = stopwatch ? time + 1000 : time - 1000
         setCurrentTime(newValue)
 
         if (newValue === 0) return
 
         timerRef.current = setInterval(() => {
-          setCurrentTime(prev => prev - 1000)
+          setCurrentTime(prev => (stopwatch ? prev + 1000 : prev - 1000))
         }, stepInMs)
       },
       speedUpFirstSecond ? 300 : stepInMs,
@@ -174,7 +204,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate>(
       return
     }
 
-    if (firstTickRef.current || currentTime === 0) return
+    if (firstTickRef.current || (!stopwatch && currentTime === 0)) return
 
     onStart && onStart(convertMsToSec(currentTime))
 

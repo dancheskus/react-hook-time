@@ -31,7 +31,7 @@ export default function ComponentState({
   return (
     <StyledStateWrapper>
       <StyledStateTitle $isDisabled={isDisabled}>{title}:</StyledStateTitle>
-      {value && <StyledStateValue>{String(value)}</StyledStateValue>}
+      {value !== undefined && <StyledStateValue>{String(value)}</StyledStateValue>}
     </StyledStateWrapper>
   )
 }

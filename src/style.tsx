@@ -43,7 +43,7 @@ export const StyledContentBody = styled.div`
 
 export const StyledHorizontalBlockWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
 `
 
@@ -134,22 +134,23 @@ export const StyledContentWrapperCombiner = styled.div`
   gap: 1rem;
 `
 
-export const StyledTimerSection = styled.section`
-  &:nth-child(1) {
-    background: #1f2041;
-  }
-  &:nth-child(2) {
-    background: #4b3f78;
-  }
-  &:nth-child(3) {
-    background: #417b5a;
-  }
+export const StyledTimerSection = styled.div<{ $stopwatch?: boolean; $preventUpdate?: boolean }>`
+  ${({ $stopwatch, $preventUpdate }) => css`
+    background: ${$stopwatch ? '#4b3f78' : $preventUpdate ? '#417b5a' : '#1f2041'};
 
-  color: white;
-  font-size: 2rem;
-  padding: 2rem;
+    width: 100%;
+    height: 100vh;
+    color: white;
+    font-size: 2rem;
+    padding: 2rem;
 
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+    > * {
+      max-width: 1000px;
+      margin: 0 auto;
+
+      &:not(:last-child) {
+        margin-bottom: 1.5rem;
+      }
+    }
+  `}
 `

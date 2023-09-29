@@ -1,1 +1,3 @@
-export { useTimer, useStopwatch } from './src/ReactTimer'
+import useTimer from './src/useTimer'
+
+export default useTimer
