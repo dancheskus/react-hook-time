@@ -1,11 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { IUpdateTimeSettings, TTimerInitialTime, TTimeUnit } from './types'
+import { IUpdateTimeSettings, TTimerInitialTime, TTimeUnit, TTimeObject } from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
+interface ITimerWithoutUpdate {
+  preventUpdate?: true
+
+  autostart?: boolean
+  onStart?: () => void
+  onCancel?: () => void
+  onEnd?: () => void
+  timeUnit?: TTimeUnit
+
+  speedUpFirstSecond?: never
+  onPause?: never
+  onReset?: never
+  onTimeSet?: never
+  onUpdate?: never
+  stepInMs?: never
+}
+
 interface ITimer {
+  preventUpdate?: never
+  onCancel?: never
+
   autostart?: boolean
   speedUpFirstSecond?: boolean
   onPause?: (currentTime: number) => void
@@ -18,12 +38,35 @@ interface ITimer {
   stepInMs?: number
 }
 
-export default function useTimer(initialTime: TTimerInitialTime, settings?: ITimer) {
+type TimerResultWithUpdate = {
+  start: () => void
+  pause: () => void
+  reset: (resetSettings?: IUpdateTimeSettings) => void
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
+  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
+  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
+  isRunning: boolean
+  currentTime: number
+  formattedCurrentTime: TTimeObject
+}
+
+type TimerResultWithoutUpdate = {
+  start: () => void
+  cancel: () => void
+  isRunning: boolean
+}
+
+export default function useTimer<T extends ITimer | ITimerWithoutUpdate>(
+  initialTime: TTimerInitialTime,
+  settings?: T,
+): T['preventUpdate'] extends true ? TimerResultWithoutUpdate : TimerResultWithUpdate {
   const {
     autostart,
+    preventUpdate,
     speedUpFirstSecond,
     onPause,
     onStart,
+    onCancel,
     onReset,
     onUpdate,
     onTimeSet,
@@ -35,12 +78,31 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
   const justRenderedRef = useRef(true)
-  const convertedInitialTimeInMsRef = useRef(convertTimeToMs(initialTime, timeUnit))
+  const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
+  const convertedInitialTimeInMsRef = useRef(convertedInitialTime)
 
   const [currentTime, setCurrentTime] = useState(convertedInitialTimeInMsRef.current)
   const [isRunning, setIsRunning] = useState(!!autostart)
 
+  const cancel = () => {
+    // only for preventUpdate
+    if (!timerRef.current) return
+
+    onCancel && onCancel()
+    stopTimer()
+  }
+
   const stopTimer = () => {
+    if (preventUpdate) {
+      if (!timerRef.current) return
+
+      setIsRunning(false)
+      clearInterval(timerRef.current)
+      timerRef.current = null
+
+      return
+    }
+
     if (!firstTickRef.current) return
 
     setIsRunning(false)
@@ -97,7 +159,22 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
   }
 
   const start = () => {
-    if (timerRef.current || firstTickRef.current || currentTime === 0) return
+    if (timerRef.current) return
+
+    if (preventUpdate) {
+      onStart && onStart()
+
+      setIsRunning(true)
+
+      timerRef.current = setTimeout(() => {
+        onEnd && onEnd()
+        stopTimer()
+      }, convertedInitialTime)
+
+      return
+    }
+
+    if (firstTickRef.current || currentTime === 0) return
 
     onStart && onStart(convertMsToSec(currentTime))
 
@@ -182,15 +259,21 @@ export default function useTimer(initialTime: TTimerInitialTime, settings?: ITim
     onPause && onPause(convertMsToSec(currentTime))
   }
 
-  return {
-    start,
-    pause,
-    reset,
-    setTime,
-    incTimeBy,
-    decTimeBy,
-    isRunning,
-    currentTime: convertMsToSec(currentTime),
-    formattedCurrentTime: convertMsToTimeObj(currentTime),
-  }
+  return preventUpdate
+    ? ({
+        start,
+        cancel,
+        isRunning,
+      } as T['preventUpdate'] extends true ? TimerResultWithoutUpdate : never)
+    : ({
+        start,
+        pause,
+        reset,
+        setTime,
+        incTimeBy,
+        decTimeBy,
+        isRunning,
+        currentTime: convertMsToSec(currentTime),
+        formattedCurrentTime: convertMsToTimeObj(currentTime),
+      } as T['preventUpdate'] extends true ? never : TimerResultWithUpdate)
 }

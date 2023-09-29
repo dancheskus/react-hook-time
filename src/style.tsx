@@ -13,6 +13,16 @@ export const commonBlockStyles = css`
 
 export const StyledSectionTitle = styled.h2`
   font-weight: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  label {
+    font-size: 1.3rem;
+    input[type='checkbox'] {
+      margin-right: 0.5rem;
+    }
+  }
 `
 
 export const StyledContentWrapper = styled.div``

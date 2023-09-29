@@ -24,7 +24,7 @@ import {
 
 const timeUnitOptions: TTimeUnit[] = ['sec', 'min', 'hour', 'day', 'ms']
 
-export default function TimerComponent() {
+function StandartTimer() {
   const onStartCallbackTriggeredState = useState(false)
   const onPauseCallbackTriggeredState = useState(false)
   const onResetCallbackTriggeredState = useState(false)
@@ -41,6 +41,7 @@ export default function TimerComponent() {
     // speedUpFirstSecond: true,
     // timeUnit: 'min',
     // stepInMs: 2000,
+
     onPause: time => onPauseCallbackTriggeredState[1](true),
     onStart: time => onStartCallbackTriggeredState[1](true),
     onReset: time => onResetCallbackTriggeredState[1](true),
@@ -56,9 +57,7 @@ export default function TimerComponent() {
   })
 
   return (
-    <StyledTimerSection>
-      <StyledSectionTitle>Timer</StyledSectionTitle>
-
+    <>
       <StyledContentWrapperCombiner>
         <StyledContentWrapper>
           <StyledContentTitle>Current state</StyledContentTitle>
@@ -169,6 +168,95 @@ export default function TimerComponent() {
           </StyledHorizontalBlockWrapper>
         </StyledContentBody>
       </StyledContentWrapper>
+    </>
+  )
+}
+
+function TimerWithoutUpdate() {
+  const onCancelCallbackTriggeredState = useState(false)
+  const onStartCallbackTriggeredState = useState(false)
+  const onEndCallbackTriggeredState = useState(false)
+
+  const timer = useTimer(3, {
+    preventUpdate: true,
+    onStart: () => onStartCallbackTriggeredState[1](true),
+    onCancel: () => onCancelCallbackTriggeredState[1](true),
+    onEnd: () => onEndCallbackTriggeredState[1](true),
+  })
+
+  return (
+    <>
+      <StyledContentWrapperCombiner>
+        <StyledContentWrapper>
+          <StyledContentTitle>Current state</StyledContentTitle>
+
+          <StyledContentBody>
+            <ComponentState title='Is Timer running' value={timer.isRunning} />
+            <ComponentState title='Current time' isDisabled />
+            <ComponentState title='Years' isDisabled />
+            <ComponentState title='Days' isDisabled />
+            <ComponentState title='Hours' isDisabled />
+            <ComponentState title='Minutes' isDisabled />
+            <ComponentState title='Seconds' isDisabled />
+          </StyledContentBody>
+        </StyledContentWrapper>
+
+        <StyledContentWrapper style={{ display: 'grid', gridTemplateRows: 'min-content 1fr' }}>
+          <StyledContentTitle>Callbacks</StyledContentTitle>
+
+          <StyledContentBody>
+            <StyledHorizontalBlockWrapper>
+              <CallbackBlock state={onEndCallbackTriggeredState} title='onEnd' />
+              <CallbackBlock state={onStartCallbackTriggeredState} title='onStart' />
+              <CallbackBlock state={onCancelCallbackTriggeredState} title='onCancel' />
+              <CallbackBlock isDisabled title='onReset' />
+              <CallbackBlock isDisabled title='onTimeSet' />
+              <CallbackBlock isDisabled title='onUpdate' />
+            </StyledHorizontalBlockWrapper>
+          </StyledContentBody>
+        </StyledContentWrapper>
+      </StyledContentWrapperCombiner>
+
+      <StyledContentWrapper>
+        <StyledContentTitle>Controls</StyledContentTitle>
+
+        <StyledContentBody>
+          <StyledHorizontalBlockWrapper>
+            <StyledButtonBlock $isGreen onClick={timer.start}>
+              start
+            </StyledButtonBlock>
+
+            <StyledButtonBlock $isRed onClick={timer.cancel}>
+              cancel
+            </StyledButtonBlock>
+          </StyledHorizontalBlockWrapper>
+        </StyledContentBody>
+      </StyledContentWrapper>
+    </>
+  )
+}
+
+export default function TimerComponent() {
+  const [preventUpdate, setPreventUpdate] = useState(false)
+
+  return (
+    <StyledTimerSection>
+      <StyledSectionTitle>
+        <div>Timer</div>
+
+        <label>
+          <input
+            type='checkbox'
+            name='update'
+            id='update'
+            checked={preventUpdate}
+            onChange={() => setPreventUpdate(prev => !prev)}
+          />
+          Prevent update
+        </label>
+      </StyledSectionTitle>
+
+      {preventUpdate ? <TimerWithoutUpdate /> : <StandartTimer />}
     </StyledTimerSection>
   )
 }

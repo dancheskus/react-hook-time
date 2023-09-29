@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const StyledStateWrapper = styled.div`
   display: flex;
@@ -6,17 +6,32 @@ const StyledStateWrapper = styled.div`
   font-size: 1.3rem;
 `
 
-const StyledStateTitle = styled.div`
-  font-weight: 600;
+const StyledStateTitle = styled.div<{ $isDisabled?: boolean }>`
+  ${({ $isDisabled: isDisabled }) => css`
+    font-weight: 600;
+
+    ${isDisabled &&
+    css`
+      color: #6b6b6b;
+    `}
+  `}
 `
 
 const StyledStateValue = styled.div``
 
-export default function ComponentState({ title, value }: { title: string; value: string | number | boolean }) {
+export default function ComponentState({
+  title,
+  value,
+  isDisabled,
+}: {
+  title: string
+  value?: string | number | boolean
+  isDisabled?: boolean
+}) {
   return (
     <StyledStateWrapper>
-      <StyledStateTitle>{title}:</StyledStateTitle>
-      <StyledStateValue>{String(value)}</StyledStateValue>
+      <StyledStateTitle $isDisabled={isDisabled}>{title}:</StyledStateTitle>
+      {value && <StyledStateValue>{String(value)}</StyledStateValue>}
     </StyledStateWrapper>
   )
 }

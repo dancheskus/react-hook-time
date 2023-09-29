@@ -1,7 +1,6 @@
 import styled, { createGlobalStyle } from 'styled-components'
 
 import StopwatchComponent from './StopwatchComponent'
-import StatelessTimerComponent from './StatelessTimerComponent'
 import TimerComponent from './TimerComponent'
 
 const GlobalStyle = createGlobalStyle`
@@ -26,7 +25,6 @@ export default function App() {
 
       <StyledAppWrapper>
         <TimerComponent />
-        <StatelessTimerComponent />
         <StopwatchComponent />
       </StyledAppWrapper>
     </>

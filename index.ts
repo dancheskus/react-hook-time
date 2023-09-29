@@ -1,1 +1,1 @@
-export { useTimer, useStopwatch, useStatelessTimer, } from './src/ReactTimer'
+export { useTimer, useStopwatch } from './src/ReactTimer'
