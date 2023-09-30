@@ -1,85 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { IUpdateTimeSettings, TTimerInitialTime, TTimeUnit, TTimeObject } from './types'
+import {
+  IUpdateTimeSettings,
+  TTimerInitialTime,
+  TTimeUnit,
+  ITimerWithoutUpdate,
+  IStopwatch,
+  ITimer,
+  IimerResultWithUpdate,
+  IimerResultWithoutUpdate,
+} from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
-interface ITimerWithoutUpdate {
-  preventUpdate?: true
-
-  stopwatch?: never
-  autostart?: boolean
-  onStart?: () => void
-  onCancel?: () => void
-  onEnd?: () => void
-  timeUnit?: TTimeUnit
-
-  speedUpFirstSecond?: never
-  onPause?: never
-  onReset?: never
-  onTimeSet?: never
-  onUpdate?: never
-  stepInMs?: never
-}
-
-interface IStopwatch {
-  stopwatch?: true
-
-  preventUpdate?: never
-  onCancel?: never
-  onEnd?: never
-
-  autostart?: boolean
-  speedUpFirstSecond?: boolean
-  onPause?: (currentTime: number) => void
-  onStart?: (currentTime: number) => void
-  onReset?: (currentTime: number) => void
-  onTimeSet?: (currentTime: number) => void
-  onUpdate?: (currentTime: number) => void
-  timeUnit?: Exclude<TTimeUnit, 'ms'>
-  stepInMs?: number
-}
-
-interface ITimer {
-  preventUpdate?: never
-  stopwatch?: never
-  onCancel?: never
-
-  autostart?: boolean
-  speedUpFirstSecond?: boolean
-  onPause?: (currentTime: number) => void
-  onStart?: (currentTime: number) => void
-  onReset?: (currentTime: number) => void
-  onTimeSet?: (currentTime: number) => void
-  onUpdate?: (currentTime: number) => void
-  onEnd?: () => void
-  timeUnit?: Exclude<TTimeUnit, 'ms'>
-  stepInMs?: number
-}
-
-type TimerResultWithUpdate = {
-  start: () => void
-  pause: () => void
-  reset: (resetSettings?: IUpdateTimeSettings) => void
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
-  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
-  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
-  isRunning: boolean
-  currentTime: number
-  formattedCurrentTime: TTimeObject
-}
-
-type TimerResultWithoutUpdate = {
-  start: () => void
-  cancel: () => void
-  isRunning: boolean
-}
-
 export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
   initialTimeOrSettings: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['preventUpdate'] extends true ? TimerResultWithoutUpdate : TimerResultWithUpdate {
+): T['preventUpdate'] extends true ? IimerResultWithoutUpdate : IimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -294,7 +232,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         start,
         cancel,
         isRunning,
-      } as T['preventUpdate'] extends true ? TimerResultWithoutUpdate : never)
+      } as T['preventUpdate'] extends true ? IimerResultWithoutUpdate : never)
     : ({
         start,
         pause,
@@ -305,5 +243,5 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as T['preventUpdate'] extends true ? never : TimerResultWithUpdate)
+      } as T['preventUpdate'] extends true ? never : IimerResultWithUpdate)
 }
