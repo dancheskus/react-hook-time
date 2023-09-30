@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import useTimer from '../useTimer'
+import useTimer from '../useTimer/useTimer'
 import { StyledContentWrapperCombiner } from '../style'
 import CallbackBlocks from './CallbackBlocks'
 import StateBlocks from './StateBlocks'

@@ -1,3 +1,1 @@
-import useTimer from './src/useTimer'
-
-export default { useTimer }
+export { useTimer } from './src/useTimer'
