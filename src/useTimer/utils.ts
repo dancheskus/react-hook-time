@@ -1,4 +1,4 @@
-import { TTimeUnit, TTimeObject } from './types'
+import { TTimeUnit, ITimeObject } from './types'
 
 const parseDate = (input: string | Date) => {
   const date = new Date(input)
@@ -29,7 +29,7 @@ export const convertTimeToMs = (time: number | string | Date, timeUnit: TTimeUni
 
 export const convertMsToSec = (milliseconds: number) => milliseconds / 1000
 
-export const convertMsToTimeObj = (milliseconds: number): TTimeObject => {
+export const convertMsToTimeObj = (milliseconds: number): ITimeObject => {
   const totalSeconds = milliseconds / 1000
   const totalMinutes = totalSeconds / 60
   const totalHours = totalMinutes / 60

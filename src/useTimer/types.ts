@@ -1,4 +1,4 @@
-export interface TTimeObject {
+export interface ITimeObject {
   years: number
   days: number
   hours: number
@@ -77,7 +77,7 @@ export interface IimerResultWithUpdate {
   decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
   isRunning: boolean
   currentTime: number
-  formattedCurrentTime: TTimeObject
+  formattedCurrentTime: ITimeObject
 }
 
 export interface IimerResultWithoutUpdate {
