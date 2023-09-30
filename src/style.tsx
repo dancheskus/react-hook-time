@@ -47,16 +47,28 @@ export const StyledHorizontalBlockWrapper = styled.div`
   gap: 0.5rem;
 `
 
-export const StyledButtonBlock = styled.div<{ $isGreen?: boolean; $isBlue?: boolean; $isRed?: boolean }>`
-  ${({ $isBlue, $isRed, $isGreen }) => css`
+export const StyledButtonBlock = styled.div<{
+  $isDisabled?: boolean
+  $isGreen?: boolean
+  $isBlue?: boolean
+  $isRed?: boolean
+}>`
+  ${({ $isBlue, $isRed, $isGreen, $isDisabled }) => css`
     ${commonBlockStyles};
 
-    background: ${$isGreen ? '#48ad74' : $isBlue ? '#37afd7' : $isRed ? '#ff8585' : '#dfbea4'};
+    background: ${$isDisabled ? 'gray' : $isGreen ? '#48ad74' : $isBlue ? '#37afd7' : $isRed ? '#ff8585' : '#dfbea4'};
     transition: filter 0.2s;
 
-    &:hover {
-      filter: brightness(1.2);
-    }
+    ${$isDisabled
+      ? css`
+          color: #a3a3a3;
+          cursor: not-allowed;
+        `
+      : css`
+          &:hover {
+            filter: brightness(1.2);
+          }
+        `}
   `}
 `
 
