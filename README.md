@@ -43,6 +43,7 @@ stopwatch* | enables stopwatch with time going up | boolean | false
 speedUpFirstSecond | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
 
 **preventUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
+
 **stopwatch** - with this prop `onEnd` callback is disabled
 
 #### Methods
