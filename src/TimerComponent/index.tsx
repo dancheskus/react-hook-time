@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { StyledSectionTitle, StyledTimerSection } from '../style'
+import { StyledSectionTitle, StyledTimerSection } from './style'
 import StandartTimer from './StandartTimer'
 import TimerWithoutUpdate from './TimerWithoutUpdate'
 import Stopwatch from './Stopwatch'

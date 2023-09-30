@@ -1,5 +1,5 @@
-import ComponentState from '../ComponentState'
-import { StyledContentWrapper, StyledContentTitle, StyledContentBody } from '../style'
+import ComponentState from './ComponentState'
+import { StyledContentTitle, StyledContentBody } from './style'
 
 interface IStateBlocks {
   initialTime: number
@@ -11,7 +11,7 @@ export default function StateBlocks({ initialTime, timer, withoutUpdate }: IStat
   const getOptions = (value: number) => (withoutUpdate ? { isDisabled: true } : { value })
 
   return (
-    <StyledContentWrapper>
+    <div>
       <StyledContentTitle>Current state</StyledContentTitle>
 
       <StyledContentBody>
@@ -24,6 +24,6 @@ export default function StateBlocks({ initialTime, timer, withoutUpdate }: IStat
         <ComponentState title='Minutes' {...getOptions(timer.formattedCurrentTime?.minutes)} />
         <ComponentState title='Seconds' {...getOptions(timer.formattedCurrentTime?.seconds)} />
       </StyledContentBody>
-    </StyledContentWrapper>
+    </div>
   )
 }

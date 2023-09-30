@@ -25,8 +25,6 @@ export const StyledSectionTitle = styled.h2`
   }
 `
 
-export const StyledContentWrapper = styled.div``
-
 export const StyledContentTitle = styled.h3`
   font-size: 1.5rem;
   margin-bottom: 1rem;

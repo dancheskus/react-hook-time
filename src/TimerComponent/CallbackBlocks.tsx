@@ -1,5 +1,5 @@
-import CallbackBlock from '../CallbackBlock'
-import { StyledContentWrapper, StyledContentTitle, StyledContentBody, StyledHorizontalBlockWrapper } from '../style'
+import CallbackBlock from './CallbackBlock'
+import { StyledContentTitle, StyledContentBody, StyledHorizontalBlockWrapper } from './style'
 
 type TCallbackBlocksFn = [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 
@@ -25,7 +25,7 @@ export default function CallbackBlocks({
   const getOptions = (cb?: TCallbackBlocksFn) => (cb ? { state: cb } : { isDisabled: true })
 
   return (
-    <StyledContentWrapper style={{ display: 'grid', gridTemplateRows: 'min-content 1fr' }}>
+    <div style={{ display: 'grid', gridTemplateRows: 'min-content 1fr' }}>
       <StyledContentTitle>Callbacks</StyledContentTitle>
 
       <StyledContentBody>
@@ -41,6 +41,6 @@ export default function CallbackBlocks({
           <CallbackBlock {...getOptions(onUpdateCallbackTriggeredState)} title='onUpdate' />
         </StyledHorizontalBlockWrapper>
       </StyledContentBody>
-    </StyledContentWrapper>
+    </div>
   )
 }

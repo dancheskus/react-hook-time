@@ -1,7 +1,6 @@
 TODO:
 
 - Add full guide to Readme.md
-- Create demo folder with styled page
 - Write tests with RTL
 - difficult Types import
   // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'

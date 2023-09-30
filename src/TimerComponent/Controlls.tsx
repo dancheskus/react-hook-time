@@ -3,7 +3,6 @@ import { useRef, useState } from 'react'
 import { TTimeUnit } from 'useTimer/types'
 
 import {
-  StyledContentWrapper,
   StyledContentTitle,
   StyledContentBody,
   StyledHorizontalBlockWrapper,
@@ -14,7 +13,7 @@ import {
   StyledTimeSelectionWrapper,
   StyledCheckboxWrapper,
   Separator,
-} from '../style'
+} from './style'
 import { timeUnitOptions } from './timeUnitOptions'
 
 export default function Controlls({ timer, withoutUpdate }: { timer: any; withoutUpdate?: boolean }) {
@@ -29,7 +28,7 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
   })
 
   return (
-    <StyledContentWrapper>
+    <div>
       <StyledContentTitle>Controls</StyledContentTitle>
 
       <StyledContentBody>
@@ -117,6 +116,6 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
           </>
         )}
       </StyledContentBody>
-    </StyledContentWrapper>
+    </div>
   )
 }
