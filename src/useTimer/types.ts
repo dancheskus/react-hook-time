@@ -68,7 +68,7 @@ export interface ITimer {
   stepInMs?: number
 }
 
-export interface IimerResultWithUpdate {
+export interface ITimerResultWithUpdate {
   start: () => void
   pause: () => void
   reset: (resetSettings?: IUpdateTimeSettings) => void
@@ -80,7 +80,7 @@ export interface IimerResultWithUpdate {
   formattedCurrentTime: ITimeObject
 }
 
-export interface IimerResultWithoutUpdate {
+export interface ITimerResultWithoutUpdate {
   start: () => void
   cancel: () => void
   isRunning: boolean

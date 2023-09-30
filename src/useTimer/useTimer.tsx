@@ -7,8 +7,8 @@ import {
   ITimerWithoutUpdate,
   IStopwatch,
   ITimer,
-  IimerResultWithUpdate,
-  IimerResultWithoutUpdate,
+  ITimerResultWithUpdate,
+  ITimerResultWithoutUpdate,
 } from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
@@ -17,7 +17,7 @@ import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
   initialTimeOrSettings: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['preventUpdate'] extends true ? IimerResultWithoutUpdate : IimerResultWithUpdate {
+): T['preventUpdate'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -232,7 +232,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         start,
         cancel,
         isRunning,
-      } as T['preventUpdate'] extends true ? IimerResultWithoutUpdate : never)
+      } as T['preventUpdate'] extends true ? ITimerResultWithoutUpdate : never)
     : ({
         start,
         pause,
@@ -243,5 +243,5 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as T['preventUpdate'] extends true ? never : IimerResultWithUpdate)
+      } as T['preventUpdate'] extends true ? never : ITimerResultWithUpdate)
 }

@@ -1,5 +1,8 @@
-
 ![react-hook-time](https://github.com/dancheskus/react-hook-time/assets/35524994/5d76edad-11dc-403c-8fcb-607d2693168f)
+
+`react-hook-time` is a library for React that allows you to create timers and stopwatches in your applications. It supports TypeScript and provides a simple and clear API, making it easy to customize according to your needs. You can set initial time, choose time units, configure callbacks, and much more.
+
+[Demo](https://gg66l2.csb.app/)
 
 ### Install
 
@@ -22,3 +25,62 @@ function App() {
   )
 }
 ```
+
+### API
+There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object
+```js
+const timer = useTimer(10)
+const timerWithoutUpdates = useTimer(15, { preventUpdate: true })
+const stopwatch = useTimer({ stapwatch: true })
+```
+
+#### Props
+**name** | **description**  | **type** | **default value**
+--|--|--|--
+autostart | enables autostart on component mount | boolean | false
+preventUpdate* | disables component re-render on every tick | boolean | false
+stopwatch* | enables stopwatch with time going up | boolean | false
+speedUpFirstSecond | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
+
+**preventUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
+**stopwatch** - with this prop `onEnd` callback is disabled
+
+#### Methods
+> `const timer = useTimer(10)`
+
+`timer` returns some values and functions
+**name** | **description**  | **type**
+--|--|--
+currentTime | current time | number
+formattedCurrentTime | you can get `years, days, hours, minutes, seconds` from this object | object
+isRunning | current timer state | boolean
+start | start timer | () => void
+pause | pause timer | () => void
+reset | reset time to initial value | (**resetSettings**) => void
+setTime | set new time value | (timeAmount, **timeSettings**) => void
+decTimeBy | decrease time | (timeAmount, **timeSettings**) => void
+incTimeBy | increase time | (timeAmount, **timeSettings**) => void
+
+#### *resetSettings*
+
+**name** | **description**  | **type** | **default value**
+--|--|--|--
+startIfWasStopped | starts timer after updating, increasing and decreasing time if was stopped before | boolean | false
+continueIfWasRunning | continues timer after updating, increasing and decreasing time if was running before | boolean | false
+
+#### *timeSettings*
+The same as ***resetSettings***  with one more key
+**name** | **description**  | **type** | **default value**
+--|--|--|--
+timeUnit | specifying the time unit to perform a function |  'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
+
+#### Callbacks
+**name** | **description**  | **return value**
+--|--|--
+onCancel | triggers when timer was cancelled | undefined
+onEnd | triggers when timer was ended | undefined
+onPause | triggers when timer was paused | currentTime
+onStart | triggers when timer was started | currentTime
+onReset | triggers when timer was reseted | currentTime
+onUpdate | triggers on every tick | currentTime
+onTimeSet | triggers when timer was set | currentTime
