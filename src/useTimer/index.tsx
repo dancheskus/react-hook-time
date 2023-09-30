@@ -101,13 +101,13 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   const enableSetTimeout = (time: number) => {
     firstTickRef.current = setTimeout(
       () => {
-        const newValue = stopwatch ? time + 1000 : time - 1000
+        const newValue = stopwatch ? time + 1000 : Math.max(time - 1000, 0)
         setCurrentTime(newValue)
 
         if (newValue === 0) return
 
         timerRef.current = setInterval(() => {
-          setCurrentTime(prev => (stopwatch ? prev + 1000 : prev - 1000))
+          setCurrentTime(prev => (stopwatch ? prev + 1000 : Math.max(prev - 1000, 0)))
         }, stepInMs)
       },
       speedUpFirstSecond ? 300 : stepInMs,
@@ -115,7 +115,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const startWithTime = (time: number) => {
-    if (timerRef.current || firstTickRef.current) return
+    if (timerRef.current || firstTickRef.current || !time) return
 
     onStart && onStart(convertMsToSec(currentTime))
 
