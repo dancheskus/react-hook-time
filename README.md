@@ -1,4 +1,5 @@
-![react-hook-time](https://github.com/dancheskus/react-hook-time/assets/35524994/5d76edad-11dc-403c-8fcb-607d2693168f)
+![react-hook-time](https://github.com/dancheskus/react-hook-time/assets/35524994/ec15bc66-8213-4f80-9b74-c30ac41f3673)
+
 
 `react-hook-time` is a library for React that allows you to create timers and stopwatches in your applications. It supports TypeScript and provides a simple and clear API, making it easy to customize according to your needs. You can set initial time, choose time units, configure callbacks, and much more.
 
