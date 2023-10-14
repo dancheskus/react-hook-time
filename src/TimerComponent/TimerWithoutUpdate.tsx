@@ -14,7 +14,7 @@ export default function TimerWithoutUpdate() {
   const initialTime = 3
 
   const timer = useTimer(initialTime, {
-    preventUpdate: true,
+    preventRerender: true,
     onStart: () => onStartCallbackTriggeredState[1](true),
     onCancel: () => onCancelCallbackTriggeredState[1](true),
     onEnd: () => onEndCallbackTriggeredState[1](true),

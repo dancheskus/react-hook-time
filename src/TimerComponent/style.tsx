@@ -136,9 +136,9 @@ export const StyledContentWrapperCombiner = styled.div`
   gap: 1rem;
 `
 
-export const StyledTimerSection = styled.div<{ $stopwatch?: boolean; $preventUpdate?: boolean }>`
-  ${({ $stopwatch, $preventUpdate }) => css`
-    background: ${$stopwatch ? '#4b3f78' : $preventUpdate ? '#417b5a' : '#1f2041'};
+export const StyledTimerSection = styled.div<{ $stopwatch?: boolean; $preventRerender?: boolean }>`
+  ${({ $stopwatch, $preventRerender }) => css`
+    background: ${$stopwatch ? '#4b3f78' : $preventRerender ? '#417b5a' : '#1f2041'};
 
     width: 100%;
     height: 100vh;

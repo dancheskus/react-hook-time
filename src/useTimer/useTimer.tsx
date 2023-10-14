@@ -17,7 +17,7 @@ import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
   initialTimeOrSettings: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['preventUpdate'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
+): T['preventRerender'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -38,7 +38,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
 
   const {
     autostart,
-    preventUpdate,
+    preventRerender,
     stopwatch,
     speedUpFirstSecond,
     onPause,
@@ -63,7 +63,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   const [isRunning, setIsRunning] = useState(!!autostart)
 
   const cancel = () => {
-    // only for preventUpdate
+    // only for preventRerender
     if (!timerRef.current) return
 
     onCancel && onCancel()
@@ -71,7 +71,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const stopTimer = () => {
-    if (preventUpdate) {
+    if (preventRerender) {
       if (!timerRef.current) return
 
       setIsRunning(false)
@@ -131,11 +131,11 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const start = () => {
-    const customChainigFunctions = preventUpdate ? undefined : chainingFunctions
+    const customChainigFunctions = preventRerender ? undefined : chainingFunctions
 
     if (timerRef.current) return customChainigFunctions
 
-    if (preventUpdate) {
+    if (preventRerender) {
       onStart && onStart()
 
       setIsRunning(true)
@@ -230,12 +230,12 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   // @ts-ignore
   chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
 
-  return preventUpdate
+  return preventRerender
     ? ({
         start,
         cancel,
         isRunning,
-      } as T['preventUpdate'] extends true ? ITimerResultWithoutUpdate : never)
+      } as T['preventRerender'] extends true ? ITimerResultWithoutUpdate : never)
     : ({
         start,
         pause,
@@ -246,5 +246,5 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as T['preventUpdate'] extends true ? never : ITimerResultWithUpdate)
+      } as T['preventRerender'] extends true ? never : ITimerResultWithUpdate)
 }

@@ -11,7 +11,7 @@ export type TTimeUnit = 'ms' | 'sec' | 'min' | 'hour' | 'day'
 export type TTimerInitialTime = number | string | Date
 
 export interface ITimerWithoutUpdate {
-  preventUpdate?: true
+  preventRerender?: true
 
   stopwatch?: never
   autostart?: boolean
@@ -31,7 +31,7 @@ export interface ITimerWithoutUpdate {
 export interface IStopwatch {
   stopwatch?: true
 
-  preventUpdate?: never
+  preventRerender?: never
   onCancel?: never
   onEnd?: never
 
@@ -47,7 +47,7 @@ export interface IStopwatch {
 }
 
 export interface ITimer {
-  preventUpdate?: never
+  preventRerender?: never
   stopwatch?: never
   onCancel?: never
 

@@ -6,4 +6,4 @@ TODO:
 - change incTimeBy to addTime
 - change decTimeBy to subtractTime
 - remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
-- addTime, subtractTime and updateTime should work in preventUpdate mode as well
+- addTime, subtractTime and updateTime should work in preventRerender mode as well

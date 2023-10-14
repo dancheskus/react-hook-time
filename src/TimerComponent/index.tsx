@@ -6,11 +6,11 @@ import TimerWithoutUpdate from './TimerWithoutUpdate'
 import Stopwatch from './Stopwatch'
 
 export default function TimerComponent() {
-  const [preventUpdate, setPreventUpdate] = useState(false)
+  const [preventRerender, setPreventRerender] = useState(false)
   const [stopwatch, setStopwatch] = useState(false)
 
   return (
-    <StyledTimerSection $stopwatch={stopwatch} $preventUpdate={preventUpdate}>
+    <StyledTimerSection $stopwatch={stopwatch} $preventRerender={preventRerender}>
       <StyledSectionTitle>
         <div>Timer</div>
 
@@ -20,16 +20,16 @@ export default function TimerComponent() {
               type='checkbox'
               name='update'
               id='update'
-              checked={preventUpdate}
+              checked={preventRerender}
               onChange={() => {
-                setPreventUpdate(prev => {
+                setPreventRerender(prev => {
                   const newValue = !prev
                   newValue && setStopwatch(false)
                   return newValue
                 })
               }}
             />
-            Prevent update
+            Prevent rerender
           </label>
 
           <label>
@@ -41,7 +41,7 @@ export default function TimerComponent() {
               onChange={() => {
                 setStopwatch(prev => {
                   const newValue = !prev
-                  newValue && setPreventUpdate(false)
+                  newValue && setPreventRerender(false)
                   return newValue
                 })
               }}
@@ -51,7 +51,7 @@ export default function TimerComponent() {
         </div>
       </StyledSectionTitle>
 
-      {stopwatch ? <Stopwatch /> : preventUpdate ? <TimerWithoutUpdate /> : <StandartTimer />}
+      {stopwatch ? <Stopwatch /> : preventRerender ? <TimerWithoutUpdate /> : <StandartTimer />}
     </StyledTimerSection>
   )
 }

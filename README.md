@@ -31,7 +31,7 @@ function App() {
 There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object
 ```js
 const timer = useTimer(10)
-const timerWithoutUpdates = useTimer(15, { preventUpdate: true })
+const timerWithoutUpdates = useTimer(15, { preventRerender: true })
 const stopwatch = useTimer({ stopwatch: true })
 ```
 
@@ -39,7 +39,7 @@ const stopwatch = useTimer({ stopwatch: true })
 **name** | **description**  | **type** | **default value**
 --|--|--|--
 autostart | enables autostart on component mount | boolean | false
-preventUpdate* | disables component re-render on every tick | boolean | false
+preventRerender* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
 speedUpFirstSecond* | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
 
@@ -47,7 +47,7 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 ![speedUpFirstSecond](https://github.com/dancheskus/react-hook-time/assets/35524994/2516aaec-9268-40db-92d7-aeb34ca62dbc)
 
 
-**preventUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
+**preventRerender** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
 
 **stopwatch** - with this prop `onEnd` callback is disabled
 
