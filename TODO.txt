@@ -7,3 +7,4 @@ TODO:
 - change decTimeBy to subtractTime
 - remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
 - addTime, subtractTime and updateTime should work in preventRerender mode as well
+- update GIF in readme to show only required info
