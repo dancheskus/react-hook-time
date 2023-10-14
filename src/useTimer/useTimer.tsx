@@ -108,10 +108,10 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     onUpdate && onUpdate(convertMsToSec(currentTime))
   }, [currentTime])
 
-  const enableSetTimeout = (time: number) => {
+  const enableSetTimeout = () => {
     firstTickRef.current = setTimeout(
       () => {
-        const newValue = stopwatch ? time + 1000 : Math.max(time - 1000, 0)
+        const newValue = stopwatch ? currentTimeRef.current + 1000 : Math.max(currentTimeRef.current - 1000, 0)
         setCurrentTime(newValue)
         currentTimeRef.current = newValue
 
@@ -154,7 +154,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
 
     setIsRunning(true)
 
-    enableSetTimeout(currentTimeRef.current)
+    enableSetTimeout()
 
     return customChainigFunctions
   }
