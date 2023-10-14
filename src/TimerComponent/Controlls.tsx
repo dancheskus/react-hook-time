@@ -11,47 +11,19 @@ import {
   StyledRadioWrapper,
   StyledRadioButton,
   StyledTimeSelectionWrapper,
-  StyledCheckboxWrapper,
   Separator,
 } from './style'
 import { timeUnitOptions } from './timeUnitOptions'
 
 export default function Controlls({ timer, withoutUpdate }: { timer: any; withoutUpdate?: boolean }) {
   const numberInputRef = useRef<HTMLInputElement>(null)
-  const startIfWasStoppedRef = useRef<HTMLInputElement>(null)
-  const continueIfWasRunningRef = useRef<HTMLInputElement>(null)
   const [timeUnit, setTimeUnit] = useState<TTimeUnit>(timeUnitOptions[0])
-  const getTimeUpdateSettings = () => ({
-    timeUnit,
-    startIfWasStopped: startIfWasStoppedRef.current?.checked,
-    continueIfWasRunning: continueIfWasRunningRef.current?.checked,
-  })
 
   return (
     <div>
       <StyledContentTitle>Controls</StyledContentTitle>
 
       <StyledContentBody>
-        {!withoutUpdate && (
-          <>
-            <StyledCheckboxWrapper>
-              <label>
-                <input type='checkbox' ref={startIfWasStoppedRef} />
-                Start timer if was stopped
-              </label>
-
-              <br />
-
-              <label>
-                <input type='checkbox' ref={continueIfWasRunningRef} />
-                Continue if was running
-              </label>
-            </StyledCheckboxWrapper>
-
-            <Separator />
-          </>
-        )}
-
         <StyledHorizontalBlockWrapper>
           <StyledButtonBlock $isGreen onClick={timer.start}>
             start
@@ -61,17 +33,7 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
             pause
           </StyledButtonBlock>
 
-          <StyledButtonBlock
-            $isRed
-            onClick={() => {
-              if (withoutUpdate) return timer.cancel()
-
-              timer.reset({
-                startIfWasStopped: startIfWasStoppedRef.current?.checked,
-                continueIfWasRunning: continueIfWasRunningRef.current?.checked,
-              })
-            }}
-          >
+          <StyledButtonBlock $isRed onClick={() => (withoutUpdate ? timer.cancel() : timer.reset())}>
             {withoutUpdate ? 'cancel' : 'reset'}
           </StyledButtonBlock>
         </StyledHorizontalBlockWrapper>
@@ -94,21 +56,19 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
 
             <StyledHorizontalBlockWrapper style={{ marginTop: '2rem' }}>
               <StyledButtonBlock
-                onClick={() => {
-                  timer.incTimeBy(numberInputRef.current?.valueAsNumber ?? 0, getTimeUpdateSettings())
-                }}
+                onClick={() => timer.incTimeBy(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
                 add
               </StyledButtonBlock>
 
               <StyledButtonBlock
-                onClick={() => timer.decTimeBy(numberInputRef.current?.valueAsNumber ?? 0, getTimeUpdateSettings())}
+                onClick={() => timer.decTimeBy(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
                 remove
               </StyledButtonBlock>
 
               <StyledButtonBlock
-                onClick={() => timer.setTime(numberInputRef.current?.valueAsNumber ?? 0, getTimeUpdateSettings())}
+                onClick={() => timer.setTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
                 update
               </StyledButtonBlock>

@@ -10,11 +10,6 @@ export type TTimeUnit = 'ms' | 'sec' | 'min' | 'hour' | 'day'
 
 export type TTimerInitialTime = number | string | Date
 
-export interface IUpdateTimeSettings {
-  startIfWasStopped?: boolean
-  continueIfWasRunning?: boolean
-}
-
 export interface ITimerWithoutUpdate {
   preventUpdate?: true
 
@@ -71,37 +66,19 @@ export interface ITimer {
 export interface IChainingFunctions {
   start: () => IChainingFunctions
   pause: () => IChainingFunctions
-  reset: (resetSettings?: IUpdateTimeSettings) => IChainingFunctions
-  setTime: (
-    newTime: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => IChainingFunctions
-  incTimeBy: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => IChainingFunctions
-  decTimeBy: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => IChainingFunctions
+  reset: () => IChainingFunctions
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
+  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
+  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
 }
 
 export interface ITimerResultWithUpdate {
   start: () => ITimerResultWithUpdate
   pause: () => ITimerResultWithUpdate
-  reset: (resetSettings?: IUpdateTimeSettings) => ITimerResultWithUpdate
-  setTime: (
-    newTime: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => ITimerResultWithUpdate
-  incTimeBy: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => ITimerResultWithUpdate
-  decTimeBy: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
-  ) => ITimerResultWithUpdate
+  reset: () => ITimerResultWithUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
+  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
+  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   isRunning: boolean
   currentTime: number
   formattedCurrentTime: ITimeObject

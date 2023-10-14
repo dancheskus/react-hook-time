@@ -124,14 +124,6 @@ export const StyledTimeSelectionWrapper = styled.div`
   gap: 0.5rem;
 `
 
-export const StyledCheckboxWrapper = styled.div`
-  font-size: 1.3rem;
-
-  input[type='checkbox'] {
-    margin-right: 0.5rem;
-  }
-`
-
 export const Separator = styled.div`
   height: 1px;
   background: rgba(255, 255, 255, 0.3);

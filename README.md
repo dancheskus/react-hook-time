@@ -58,20 +58,12 @@ formattedCurrentTime | you can get `years, days, hours, minutes, seconds` from t
 isRunning | current timer state | boolean
 start | start timer | () => void
 pause | pause timer | () => void
-reset | reset time to initial value | (**resetSettings**) => void
+reset | reset time to initial value | () => void
 setTime | set new time value | (timeAmount, **timeSettings**) => void
 decTimeBy | decrease time | (timeAmount, **timeSettings**) => void
 incTimeBy | increase time | (timeAmount, **timeSettings**) => void
 
-#### *resetSettings*
-
-**name** | **description**  | **type** | **default value**
---|--|--|--
-startIfWasStopped | starts timer after updating, increasing and decreasing time if was stopped before | boolean | false
-continueIfWasRunning | continues timer after updating, increasing and decreasing time if was running before | boolean | false
-
 #### *timeSettings*
-The same as ***resetSettings***  with one more key
 **name** | **description**  | **type** | **default value**
 --|--|--|--
 timeUnit | specifying the time unit to perform a function |  'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
