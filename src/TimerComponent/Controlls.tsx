@@ -70,7 +70,7 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
               <StyledButtonBlock
                 onClick={() => timer.setTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
-                update
+                set
               </StyledButtonBlock>
             </StyledHorizontalBlockWrapper>
           </>
