@@ -32,7 +32,7 @@ There are 3 options to pass arguments to `useTimer()`. You can pass initialTime,
 ```js
 const timer = useTimer(10)
 const timerWithoutUpdates = useTimer(15, { preventUpdate: true })
-const stopwatch = useTimer({ stapwatch: true })
+const stopwatch = useTimer({ stopwatch: true })
 ```
 
 #### Props
