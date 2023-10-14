@@ -68,20 +68,47 @@ export interface ITimer {
   stepInMs?: number
 }
 
+export interface IChainingFunctions {
+  start: () => IChainingFunctions
+  pause: () => IChainingFunctions
+  reset: (resetSettings?: IUpdateTimeSettings) => IChainingFunctions
+  setTime: (
+    newTime: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => IChainingFunctions
+  incTimeBy: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => IChainingFunctions
+  decTimeBy: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => IChainingFunctions
+}
+
 export interface ITimerResultWithUpdate {
-  start: () => void
-  pause: () => void
-  reset: (resetSettings?: IUpdateTimeSettings) => void
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
-  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
-  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit }) => void
+  start: () => ITimerResultWithUpdate
+  pause: () => ITimerResultWithUpdate
+  reset: (resetSettings?: IUpdateTimeSettings) => ITimerResultWithUpdate
+  setTime: (
+    newTime: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => ITimerResultWithUpdate
+  incTimeBy: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => ITimerResultWithUpdate
+  decTimeBy: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: IUpdateTimeSettings & { timeUnit?: TTimeUnit },
+  ) => ITimerResultWithUpdate
   isRunning: boolean
   currentTime: number
   formattedCurrentTime: ITimeObject
 }
 
 export interface ITimerResultWithoutUpdate {
-  start: () => void
+  start: () => IChainingFunctions
   cancel: () => void
   isRunning: boolean
 }

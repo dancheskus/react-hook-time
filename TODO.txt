@@ -3,3 +3,6 @@ TODO:
 - Write tests with RTL
 - difficult Types import
   // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'
+- change incTimeBy to addTime
+- change decTimeBy to subtractTime
+- remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
