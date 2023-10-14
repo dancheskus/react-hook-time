@@ -169,9 +169,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const setTime = (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
-    const { timeUnit = 'sec' } = setTimeSettings || {}
-
-    const updatedTime = convertTimeToMs(newTime, timeUnit)
+    const updatedTime = convertTimeToMs(newTime, setTimeSettings?.timeUnit || timeUnit)
 
     onTimeSet && onTimeSet(convertMsToSec(updatedTime))
 
@@ -183,9 +181,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const addTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
-    const { timeUnit = 'sec' } = setTimeSettings || {}
-
-    const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, timeUnit)
+    const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
 
     convertedInitialTimeInMsRef.current = updatedTime
 
@@ -195,9 +191,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const subtractTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
-    const { timeUnit = 'sec' } = setTimeSettings || {}
-
-    let updatedTime = currentTimeRef.current - convertTimeToMs(timeAmount, timeUnit)
+    let updatedTime = currentTimeRef.current - convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
 
     if (updatedTime < 0) {
       updatedTime = 0

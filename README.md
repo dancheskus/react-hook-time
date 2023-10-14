@@ -15,13 +15,21 @@
 import { useTimer } from 'react-hook-time'
 
 function App() {
-  const { currentTime, start, pause } = useTimer(10)
+  const { currentTime, start, pause, reset } = useTimer(10, {
+    onEnd: () => console.log('Timer ended'),
+  })
 
   return (
     <div>
       <div>Current time {currentTime}</div>
       <button onClick={start}>start</button>
       <button onClick={pause}>pause</button>
+      <button onClick={() => {
+        // chaining functions
+        reset().pause()
+      }}>
+        reset
+      </button>
     </div>
   )
 }
@@ -39,6 +47,8 @@ const stopwatch = useTimer({ stopwatch: true })
 **name** | **description**  | **type** | **default value**
 --|--|--|--
 autostart | enables autostart on component mount | boolean | false
+stepInMs | by default tick step is 1 second. But you can change it | number | 1000
+timeUnit | indicates the default time unit in which the timer will operate | 'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
 preventRerender* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
 speedUpFirstSecond* | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
@@ -54,7 +64,7 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 #### Methods
 > `const timer = useTimer(10)`
 
-`timer` returns some values and functions
+`timer` returns some values and functions. You can use them separately `timer.start()` or chain them if required `timer.reset().pause()`
 **name** | **description**  | **type**
 --|--|--
 currentTime | current time | number
@@ -70,7 +80,7 @@ addTime | increase time | (timeAmount, **timeSettings**) => void
 #### *timeSettings*
 **name** | **description**  | **type** | **default value**
 --|--|--|--
-timeUnit | specifying the time unit to perform a function |  'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
+timeUnit | specifying the time unit to perform a function |  'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec' or timeUnit used in useTimer props
 
 #### Callbacks
 **name** | **description**  | **return value**
