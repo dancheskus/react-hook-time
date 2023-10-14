@@ -32,8 +32,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     pause: () => chainingFunctions,
     reset: () => chainingFunctions,
     setTime: () => chainingFunctions,
-    incTimeBy: () => chainingFunctions,
-    decTimeBy: () => chainingFunctions,
+    addTime: () => chainingFunctions,
+    subtractTime: () => chainingFunctions,
   }
 
   const {
@@ -182,7 +182,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  const incTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+  const addTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
     const { timeUnit = 'sec' } = setTimeSettings || {}
 
     const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, timeUnit)
@@ -194,7 +194,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  const decTimeBy = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+  const subtractTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
     const { timeUnit = 'sec' } = setTimeSettings || {}
 
     let updatedTime = currentTimeRef.current - convertTimeToMs(timeAmount, timeUnit)
@@ -228,7 +228,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   // @ts-ignore
-  chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
+  chainingFunctions = { start, pause, reset, setTime, addTime, subtractTime }
 
   return preventRerender
     ? ({
@@ -241,8 +241,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         pause,
         reset,
         setTime,
-        incTimeBy,
-        decTimeBy,
+        addTime,
+        subtractTime,
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),

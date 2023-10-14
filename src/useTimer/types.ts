@@ -68,8 +68,8 @@ export interface IChainingFunctions {
   pause: () => IChainingFunctions
   reset: () => IChainingFunctions
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
-  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
-  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
+  addTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
+  subtractTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
 }
 
 export interface ITimerResultWithUpdate {
@@ -77,8 +77,8 @@ export interface ITimerResultWithUpdate {
   pause: () => ITimerResultWithUpdate
   reset: () => ITimerResultWithUpdate
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
-  incTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
-  decTimeBy: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
+  addTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
+  subtractTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   isRunning: boolean
   currentTime: number
   formattedCurrentTime: ITimeObject

@@ -64,8 +64,8 @@ start | start timer | () => void
 pause | pause timer | () => void
 reset | reset time to initial value | () => void
 setTime | set new time value | (timeAmount, **timeSettings**) => void
-decTimeBy | decrease time | (timeAmount, **timeSettings**) => void
-incTimeBy | increase time | (timeAmount, **timeSettings**) => void
+subtractTime | decrease time | (timeAmount, **timeSettings**) => void
+addTime | increase time | (timeAmount, **timeSettings**) => void
 
 #### *timeSettings*
 **name** | **description**  | **type** | **default value**
