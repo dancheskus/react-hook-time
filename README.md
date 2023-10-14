@@ -41,8 +41,9 @@ const stopwatch = useTimer({ stopwatch: true })
 autostart | enables autostart on component mount | boolean | false
 preventUpdate* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
-speedUpFirstSecond | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
+speedUpFirstSecond* | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
 
+**speedUpFirstSecond** - сompare the two sides. In both cases, the 'start' button was clicked simultaneously. However, on the right side, the timer visually starts faster.
 ![speedUpFirstSecond](https://github.com/dancheskus/react-hook-time/assets/35524994/2516aaec-9268-40db-92d7-aeb34ca62dbc)
 
 
