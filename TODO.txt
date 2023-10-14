@@ -6,4 +6,4 @@ TODO:
 - change incTimeBy to addTime
 - change decTimeBy to subtractTime
 - remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTimeBy, decTimeBy }
-- add GIF for speedUpFirstSecond to Readme
+- addTime, subtractTime and updateTime should work in preventUpdate mode as well
