@@ -42,7 +42,7 @@ export interface IStopwatch {
   onReset?: (currentTime: number) => void
   onTimeSet?: (currentTime: number) => void
   onUpdate?: (currentTime: number) => void
-  timeUnit?: Exclude<TTimeUnit, 'ms'>
+  timeUnit?: TTimeUnit
   stepInMs?: number
 }
 
@@ -59,7 +59,7 @@ export interface ITimer {
   onTimeSet?: (currentTime: number) => void
   onUpdate?: (currentTime: number) => void
   onEnd?: () => void
-  timeUnit?: Exclude<TTimeUnit, 'ms'>
+  timeUnit?: TTimeUnit
   stepInMs?: number
 }
 
