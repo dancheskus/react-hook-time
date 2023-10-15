@@ -47,7 +47,7 @@ const stopwatch = useTimer({ stopwatch: true })
 **name** | **description**  | **type** | **default value**
 --|--|--|--
 autostart | enables autostart on component mount | boolean | false
-stepInMs | by default tick step is 1 second. But you can change it | number | 1000
+stepInMs* | by default tick step is 1 second. But you can change it | number | 1000
 timeUnit | indicates the default time unit in which the timer will operate | 'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
 preventRerender* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
@@ -55,6 +55,9 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 **speedUpFirstSecond** - сompare the two sides. In both cases, the 'start' button was clicked simultaneously. However, on the right side, the timer visually starts faster.
 ![speedUpFirstSecond](https://github.com/dancheskus/react-hook-time/assets/35524994/40b10c46-7093-4504-b6e3-98ff4938e924)
+**stepInMs**
+![stepInMs](https://github.com/dancheskus/react-hook-time/assets/35524994/7181c319-bbcb-4c8c-a16d-8b5c5d8268e6)
+
 
 
 
