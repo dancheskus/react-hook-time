@@ -12,7 +12,7 @@
 ### Quickstart
 
 ```jsx
-import { useTimer } from 'react-hook-time'
+import useTimer from 'react-hook-time'
 
 function App() {
   const { currentTime, start, pause, reset } = useTimer(10, {
