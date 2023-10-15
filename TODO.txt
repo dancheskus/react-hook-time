@@ -3,5 +3,5 @@ TODO:
 - Write tests with RTL
 - difficult Types import
   // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'
-- remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, addTime, subtractTime }
-- addTime, subtractTime and updateTime should work in preventRerender mode as well
+- remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTime, decTime }
+- incTime, decTime and setTime should work in preventRerender mode as well

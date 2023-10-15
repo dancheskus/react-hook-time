@@ -56,13 +56,13 @@ export default function Controlls({ timer, withoutUpdate }: { timer: any; withou
 
             <StyledHorizontalBlockWrapper style={{ marginTop: '2rem' }}>
               <StyledButtonBlock
-                onClick={() => timer.addTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
+                onClick={() => timer.incTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
                 add
               </StyledButtonBlock>
 
               <StyledButtonBlock
-                onClick={() => timer.subtractTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
+                onClick={() => timer.decTime(numberInputRef.current?.valueAsNumber ?? 0, { timeUnit })}
               >
                 remove
               </StyledButtonBlock>

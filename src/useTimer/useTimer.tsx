@@ -32,8 +32,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     pause: () => chainingFunctions,
     reset: () => chainingFunctions,
     setTime: () => chainingFunctions,
-    addTime: () => chainingFunctions,
-    subtractTime: () => chainingFunctions,
+    incTime: () => chainingFunctions,
+    decTime: () => chainingFunctions,
   }
 
   const {
@@ -180,7 +180,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  const addTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+  const incTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
     const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
 
     convertedInitialTimeInMsRef.current = updatedTime
@@ -190,7 +190,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  const subtractTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+  const decTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
     let updatedTime = currentTimeRef.current - convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
 
     if (updatedTime < 0) {
@@ -222,7 +222,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   // @ts-ignore
-  chainingFunctions = { start, pause, reset, setTime, addTime, subtractTime }
+  chainingFunctions = { start, pause, reset, setTime, incTime, decTime }
 
   return preventRerender
     ? ({
@@ -235,8 +235,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         pause,
         reset,
         setTime,
-        addTime,
-        subtractTime,
+        incTime,
+        decTime,
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
