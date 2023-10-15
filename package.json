@@ -1,6 +1,6 @@
 {
   "name": "react-hook-time",
-  "version": "0.0.2-beta.2",
+  "version": "0.0.2-beta.3",
   "type": "module",
   "description": "A React timer library",
   "main": "dist/index.umd.js",
