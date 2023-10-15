@@ -6,3 +6,4 @@ TODO:
 - remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, addTime, subtractTime }
 - addTime, subtractTime and updateTime should work in preventRerender mode as well
 - update GIF in readme to show only required info
+- make useTimer default export instead of { useTimer }
