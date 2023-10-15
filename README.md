@@ -54,9 +54,11 @@ stopwatch* | enables stopwatch with time going up | boolean | false
 speedUpFirstSecond* | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
 
 **speedUpFirstSecond** - сompare the two sides. In both cases, the 'start' button was clicked simultaneously. However, on the right side, the timer visually starts faster.
+
 ![speedUpFirstSecond](https://github.com/dancheskus/react-hook-time/assets/35524994/40b10c46-7093-4504-b6e3-98ff4938e924)
 
 **stepInMs**
+
 ![stepInMs](https://github.com/dancheskus/react-hook-time/assets/35524994/7181c319-bbcb-4c8c-a16d-8b5c5d8268e6)
 
 
