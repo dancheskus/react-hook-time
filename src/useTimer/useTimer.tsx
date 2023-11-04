@@ -31,6 +31,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     start: () => chainingFunctions,
     pause: () => chainingFunctions,
     reset: () => chainingFunctions,
+    setStep: () => chainingFunctions,
     setTime: () => chainingFunctions,
     incTime: () => chainingFunctions,
     decTime: () => chainingFunctions,
@@ -49,12 +50,13 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     onTimeSet,
     onEnd,
     timeUnit = 'sec',
-    stepInMs = 1000,
+    step = 1000,
   } = settings || {}
 
   const timerRef = useRef<number | null>(null)
   const firstTickRef = useRef<number | null>(null)
   const justRenderedRef = useRef(true)
+  const localStepRef = useRef(step)
   const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
   const convertedInitialTimeInMsRef = useRef(convertedInitialTime)
 
@@ -124,9 +126,9 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
 
             return newValue
           })
-        }, stepInMs)
+        }, localStepRef.current)
       },
-      speedUpFirstSecond ? 300 : stepInMs,
+      speedUpFirstSecond ? 300 : localStepRef.current,
     )
   }
 
@@ -221,8 +223,21 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
+  const setStep = (newStep: number) => {
+    if (preventRerender || localStepRef.current === newStep) return
+
+    localStepRef.current = newStep
+
+    if (timerRef.current) {
+      pause()
+      start()
+    }
+
+    return chainingFunctions
+  }
+
   // @ts-ignore
-  chainingFunctions = { start, pause, reset, setTime, incTime, decTime }
+  chainingFunctions = { start, pause, reset, setTime, incTime, decTime, setStep }
 
   return preventRerender
     ? ({
@@ -237,6 +252,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         setTime,
         incTime,
         decTime,
+        setStep,
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),

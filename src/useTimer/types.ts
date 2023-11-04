@@ -25,7 +25,7 @@ export interface ITimerWithoutUpdate {
   onReset?: never
   onTimeSet?: never
   onUpdate?: never
-  stepInMs?: never
+  step?: never
 }
 
 export interface IStopwatch {
@@ -43,7 +43,7 @@ export interface IStopwatch {
   onTimeSet?: (currentTime: number) => void
   onUpdate?: (currentTime: number) => void
   timeUnit?: TTimeUnit
-  stepInMs?: number
+  step?: number
 }
 
 export interface ITimer {
@@ -60,13 +60,14 @@ export interface ITimer {
   onUpdate?: (currentTime: number) => void
   onEnd?: () => void
   timeUnit?: TTimeUnit
-  stepInMs?: number
+  step?: number
 }
 
 export interface IChainingFunctions {
   start: () => IChainingFunctions
   pause: () => IChainingFunctions
   reset: () => IChainingFunctions
+  setStep: (newStep: number) => IChainingFunctions
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
   incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
   decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
@@ -76,6 +77,7 @@ export interface ITimerResultWithUpdate {
   start: () => ITimerResultWithUpdate
   pause: () => ITimerResultWithUpdate
   reset: () => ITimerResultWithUpdate
+  setStep: (newStep: number) => IChainingFunctions
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate

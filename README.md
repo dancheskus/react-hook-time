@@ -47,7 +47,7 @@ const stopwatch = useTimer({ stopwatch: true })
 **name** | **description**  | **type** | **default value**
 --|--|--|--
 autostart | enables autostart on component mount | boolean | false
-stepInMs* | by default tick step is 1 second. But you can change it | number | 1000
+step* | by default tick step is 1000 millisecond (1 sec). But you can change it | number | 1000
 timeUnit | indicates the default time unit in which the timer will operate | 'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
 preventRerender* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
@@ -57,9 +57,9 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 ![speedUpFirstSecond](https://github.com/dancheskus/react-hook-time/assets/35524994/40b10c46-7093-4504-b6e3-98ff4938e924)
 
-**stepInMs**
+**step**
 
-![stepInMs](https://github.com/dancheskus/react-hook-time/assets/35524994/7181c319-bbcb-4c8c-a16d-8b5c5d8268e6)
+![step](https://github.com/dancheskus/react-hook-time/assets/35524994/7181c319-bbcb-4c8c-a16d-8b5c5d8268e6)
 
 
 
@@ -81,6 +81,7 @@ isRunning | current timer state | boolean
 start | start timer | () => void
 pause | pause timer | () => void
 reset | reset time to initial value | () => void
+setStep | set new step in milliseconds | (step, **number**) => void
 setTime | set new time value | (timeAmount, **timeSettings**) => void
 decTime | decrease time | (timeAmount, **timeSettings**) => void
 incTime | increase time | (timeAmount, **timeSettings**) => void
