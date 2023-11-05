@@ -53,8 +53,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     step = 1000,
   } = settings || {}
 
-  const timerRef = useRef<number | null>(null)
-  const firstTickRef = useRef<number | null>(null)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const firstTickRef = useRef<NodeJS.Timeout | null>(null)
   const justRenderedRef = useRef(true)
   const localStepRef = useRef(step)
   const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
