@@ -1,9 +1,12 @@
 import { useState } from 'react'
 
-import { StyledSectionTitle, StyledTimerSection } from './style'
+import { StyledSectionTitle, StyledTimerSection, StyledFooter, StlyedFooterItem } from './style'
 import StandartTimer from './StandartTimer'
 import TimerWithoutUpdate from './TimerWithoutUpdate'
 import Stopwatch from './Stopwatch'
+
+const npmLink = 'https://www.npmjs.com/package/react-hook-time'
+const githubLink = 'https://github.com/dancheskus/react-hook-time'
 
 export default function TimerComponent() {
   const [preventRerender, setPreventRerender] = useState(false)
@@ -12,7 +15,9 @@ export default function TimerComponent() {
   return (
     <StyledTimerSection $stopwatch={stopwatch} $preventRerender={preventRerender}>
       <StyledSectionTitle>
-        <div>Timer</div>
+        <a href={npmLink} target='_blank' rel='noreferrer'>
+          react-hook-time
+        </a>
 
         <div style={{ display: 'grid' }}>
           <label>
@@ -52,6 +57,18 @@ export default function TimerComponent() {
       </StyledSectionTitle>
 
       {stopwatch ? <Stopwatch /> : preventRerender ? <TimerWithoutUpdate /> : <StandartTimer />}
+
+      <StyledFooter>
+        <StlyedFooterItem href={githubLink} target='_blank'>
+          github
+        </StlyedFooterItem>
+
+        <span />
+
+        <StlyedFooterItem href={npmLink} target='_blank'>
+          npm
+        </StlyedFooterItem>
+      </StyledFooter>
     </StyledTimerSection>
   )
 }

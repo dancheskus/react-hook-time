@@ -17,6 +17,19 @@ export const StyledSectionTitle = styled.h2`
   justify-content: space-between;
   align-items: center;
 
+  a {
+    font-size: 2rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: transform 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
   label {
     font-size: 1.3rem;
     input[type='checkbox'] {
@@ -155,4 +168,32 @@ export const StyledTimerSection = styled.div<{ $stopwatch?: boolean; $preventRer
       }
     }
   `}
+`
+
+export const StyledFooter = styled.div`
+  display: flex;
+  gap: 13px;
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+
+  span {
+    width: 1px;
+    height: 1.4rem;
+    background: rgba(255, 255, 255, 0.6);
+    opacity: 0.5;
+  }
+`
+
+export const StlyedFooterItem = styled.a`
+  font-size: 1.1rem;
+  font-weight: 100;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s;
+
+  &:hover {
+    color: #fff;
+  }
 `
