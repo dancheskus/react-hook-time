@@ -1,4 +1,4 @@
-  /// <reference types="vitest" />
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
@@ -30,7 +30,10 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
-  plugins: [react({ babel: babelPlugins }), dts()],
+  plugins: [
+    react({ babel: babelPlugins }),
+    dts({ tsconfigPath: './tsconfig.build.json', })
+  ],
   test: {
     globals: true,
     environment: 'happy-dom',
