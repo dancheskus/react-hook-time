@@ -5,6 +5,8 @@
 
 Open basic [demo](https://gg66l2.csb.app/) to see how it works
 
+Go to [npm](https://www.npmjs.com/package/react-hook-time) page
+
 ### Install
 
     npm install react-hook-time
