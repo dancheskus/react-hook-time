@@ -17,6 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "declaration": false,
+    "typeRoots": ["./dist/index.d.ts"],
     "types": ["vitest/globals"]
   },
   "include": ["src", "./index.ts", "./setupTest.ts"],
