@@ -22,7 +22,6 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "prepare": "yarn build",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src --color",
     "fix": "yarn lint --fix",
