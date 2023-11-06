@@ -20,6 +20,6 @@
     "typeRoots": ["./dist/index.d.ts"],
     "types": ["vitest/globals"]
   },
-  "include": ["src", "./index.ts", "./setupTest.ts"],
+  "include": ["src", "./index.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
