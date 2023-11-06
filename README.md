@@ -59,7 +59,8 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 **step**
 
-![step](https://github.com/dancheskus/react-hook-time/assets/35524994/7181c319-bbcb-4c8c-a16d-8b5c5d8268e6)
+![step](https://github.com/dancheskus/react-hook-time/assets/35524994/84f81509-39c6-42f5-9097-fef8af9c99e9)
+
 
 
 
