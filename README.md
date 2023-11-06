@@ -3,7 +3,9 @@
 
 `react-hook-time` is a library for React that allows you to create timers and stopwatches in your applications. It supports TypeScript and provides a simple and clear API, making it easy to customize according to your needs. You can set initial time, choose time units, configure callbacks, and much more.
 
-[Demo](https://gg66l2.csb.app/)
+Open basic [demo](https://gg66l2.csb.app/) to see how it works
+
+Go to [npm](https://www.npmjs.com/package/react-hook-time) page
 
 ### Install
 
@@ -36,9 +38,10 @@ function App() {
 ```
 
 ### API
-There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object
+There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object. InitialTime can be number or `Date` object
 ```js
 const timer = useTimer(10)
+const timer = useTimer(new Date('2023-12-01'))
 const timerWithoutUpdates = useTimer(15, { preventRerender: true })
 const stopwatch = useTimer({ stopwatch: true })
 ```
@@ -82,11 +85,13 @@ isRunning | current timer state | boolean
 start | start timer | () => void
 pause | pause timer | () => void
 reset | reset time to initial value | () => void
-setStep | set new step in milliseconds | (step, **number**) => void
-setTime | set new time value | (timeAmount, **timeSettings**) => void
-decTime | decrease time | (timeAmount, **timeSettings**) => void
-incTime | increase time | (timeAmount, **timeSettings**) => void
+setStep | set new step in milliseconds | (number) => void
+setTime | set new time value | (**timeAmount**, **timeSettings**) => void
+decTime | decrease time | (**timeAmount**, **timeSettings**) => void
+incTime | increase time | (**timeAmount**, **timeSettings**) => void
 
+#### *timeAmount*
+timeAmount can be number or `Date` object
 #### *timeSettings*
 **name** | **description**  | **type** | **default value**
 --|--|--|--
