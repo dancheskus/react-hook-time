@@ -17,9 +17,13 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "declaration": false,
-    "typeRoots": ["./dist/index.d.ts"],
+    "typeRoots": ["./dist/index.d.ts"], // disable when writing tests
     "types": ["vitest/globals"]
   },
-  "include": ["src/useTimer", "./index.ts"],
+  "include": [
+    // "src", // enable for tests
+    "src/useTimer", // enable for build
+    "./index.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
