@@ -1,6 +1,11 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import { useRef } from 'react'
 
 import useTimer from './useTimer/useTimer'
+
+const runTicks = (times: number) => {
+  Array.from({ length: times }).forEach(() => act(() => vi.advanceTimersByTime(1000)))
+}
 
 vi.useFakeTimers()
 
@@ -17,6 +22,9 @@ describe('Standart timer', () => {
   const onEnd = vi.fn()
 
   const StandartTimerComponent = ({ autostart }: { autostart?: boolean }) => {
+    const renderCountRef = useRef(0)
+    renderCountRef.current++
+
     const timer = useTimer(10, { autostart, onStart, onPause, onReset, onUpdate, onTimeSet, onEnd })
 
     return (
@@ -31,6 +39,7 @@ describe('Standart timer', () => {
         <button data-testid='set-step' onClick={() => timer.setStep(500)} />
         <div data-testid='current-time'>{timer.currentTime}</div>
         <div data-testid='running-state'>{String(timer.isRunning)}</div>
+        <div data-testid='render-count'>{renderCountRef.current}</div>
       </>
     )
   }
@@ -165,6 +174,12 @@ describe('Standart timer', () => {
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
   })
 
+  it('should rerender 5 times', () => {
+    render(<StandartTimerComponent autostart />)
+    runTicks(5)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('6')
+  })
+
   it('should call callbacks correctly', () => {
     render(<StandartTimerComponent />)
     fireEvent.click(screen.getByTestId('start'))
@@ -195,6 +210,9 @@ describe('Timer without update', () => {
   const onEnd = vi.fn()
 
   const TimerWithoutUpdateComponent = ({ autostart }: { autostart?: boolean }) => {
+    const renderCountRef = useRef(0)
+    renderCountRef.current++
+
     const timer = useTimer(10, { autostart, preventRerender: true, onStart, onEnd, onCancel })
 
     return (
@@ -202,6 +220,7 @@ describe('Timer without update', () => {
         <button data-testid='start' onClick={timer.start} />
         <button data-testid='cancel' onClick={timer.cancel} />
         <div data-testid='running-state'>{String(timer.isRunning)}</div>
+        <div data-testid='render-count'>{renderCountRef.current}</div>
       </>
     )
   }
@@ -230,6 +249,12 @@ describe('Timer without update', () => {
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
   })
 
+  it('should rerender 2 times', () => {
+    render(<TimerWithoutUpdateComponent autostart />)
+    runTicks(10)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('2')
+  })
+
   it('should call callbacks correctly', () => {
     render(<TimerWithoutUpdateComponent />)
     fireEvent.click(screen.getByTestId('start'))
@@ -252,6 +277,9 @@ describe('Stopwatch', () => {
   const onTimeSet = vi.fn()
 
   const StopwatchComponent = ({ autostart, initialTime }: { autostart?: boolean; initialTime?: number }) => {
+    const renderCountRef = useRef(0)
+    renderCountRef.current++
+
     const timer = useTimer(initialTime || 0, {
       autostart,
       stopwatch: true,
@@ -274,6 +302,7 @@ describe('Stopwatch', () => {
         <button data-testid='set-step' onClick={() => timer.setStep(500)} />
         <div data-testid='current-time'>{timer.currentTime}</div>
         <div data-testid='running-state'>{String(timer.isRunning)}</div>
+        <div data-testid='render-count'>{renderCountRef.current}</div>
       </>
     )
   }
@@ -393,6 +422,12 @@ describe('Stopwatch', () => {
     expect(screen.getByTestId('running-state')).toHaveTextContent('true')
     fireEvent.click(screen.getByTestId('pause'))
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
+  })
+
+  it('should rerender 2 times', () => {
+    render(<StopwatchComponent autostart />)
+    runTicks(5)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('6')
   })
 
   it('should call callbacks correctly', () => {
