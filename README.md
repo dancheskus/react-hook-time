@@ -41,8 +41,8 @@ function App() {
 There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object. InitialTime can be number or `Date` object
 ```js
 const timer = useTimer(10)
-const timer = useTimer(new Date('2023-12-01'))
-const timerWithoutUpdates = useTimer(15, { preventRerender: true })
+const timerFromDate = useTimer(new Date('2023-12-01'))
+const timerWithoutUpdates = useTimer(15, { stopUpdate: true })
 const stopwatch = useTimer({ stopwatch: true })
 ```
 
@@ -52,7 +52,7 @@ const stopwatch = useTimer({ stopwatch: true })
 autostart | enables autostart on component mount | boolean | false
 step* | by default tick step is 1000 millisecond (1 sec). But you can change it | number | 1000
 timeUnit | indicates the default time unit in which the timer will operate | 'ms'  \|  'sec'  \|  'min'  \|  'hour'  \|  'day' | 'sec'
-preventRerender* | disables component re-render on every tick | boolean | false
+stopUpdate* | disables component re-render on every tick | boolean | false
 stopwatch* | enables stopwatch with time going up | boolean | false
 speedUpFirstSecond* | first tick will happen faster after timer starts. Visual thing similar to iOS timers | boolean | false
 
@@ -69,7 +69,7 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 
 
-**preventRerender** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
+**stopUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
 
 **stopwatch** - with this prop `onEnd` callback is disabled
 

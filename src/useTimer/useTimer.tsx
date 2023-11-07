@@ -17,7 +17,7 @@ import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
   initialTimeOrSettings: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['preventRerender'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
+): T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -39,7 +39,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
 
   const {
     autostart,
-    preventRerender,
+    stopUpdate,
     stopwatch,
     speedUpFirstSecond,
     onPause,
@@ -65,7 +65,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   const [isRunning, setIsRunning] = useState(!!autostart)
 
   const cancel = () => {
-    // only for preventRerender
+    // only for stopUpdate
     if (!timerRef.current) return
 
     onCancel && onCancel()
@@ -73,7 +73,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const stopTimer = () => {
-    if (preventRerender) {
+    if (stopUpdate) {
       if (!timerRef.current) return
 
       setIsRunning(false)
@@ -133,11 +133,11 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const start = () => {
-    const customChainigFunctions = preventRerender ? undefined : chainingFunctions
+    const customChainigFunctions = stopUpdate ? undefined : chainingFunctions
 
     if (timerRef.current) return customChainigFunctions
 
-    if (preventRerender) {
+    if (stopUpdate) {
       onStart && onStart()
 
       setIsRunning(true)
@@ -224,7 +224,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const setStep = (newStep: number) => {
-    if (preventRerender || localStepRef.current === newStep) return
+    if (stopUpdate || localStepRef.current === newStep) return
 
     localStepRef.current = newStep
 
@@ -239,12 +239,12 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   // @ts-ignore
   chainingFunctions = { start, pause, reset, setTime, incTime, decTime, setStep }
 
-  return preventRerender
+  return stopUpdate
     ? ({
         start,
         cancel,
         isRunning,
-      } as T['preventRerender'] extends true ? ITimerResultWithoutUpdate : never)
+      } as T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never)
     : ({
         start,
         pause,
@@ -256,5 +256,5 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as T['preventRerender'] extends true ? never : ITimerResultWithUpdate)
+      } as T['stopUpdate'] extends true ? never : ITimerResultWithUpdate)
 }

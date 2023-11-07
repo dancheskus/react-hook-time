@@ -9,11 +9,11 @@ const npmLink = 'https://www.npmjs.com/package/react-hook-time'
 const githubLink = 'https://github.com/dancheskus/react-hook-time'
 
 export default function TimerComponent() {
-  const [preventRerender, setPreventRerender] = useState(false)
+  const [stopUpdate, setstopUpdate] = useState(false)
   const [stopwatch, setStopwatch] = useState(false)
 
   return (
-    <StyledTimerSection $stopwatch={stopwatch} $preventRerender={preventRerender}>
+    <StyledTimerSection $stopwatch={stopwatch} $stopUpdate={stopUpdate}>
       <StyledSectionTitle>
         <a href={npmLink} target='_blank' rel='noreferrer'>
           react-hook-time
@@ -25,9 +25,9 @@ export default function TimerComponent() {
               type='checkbox'
               name='update'
               id='update'
-              checked={preventRerender}
+              checked={stopUpdate}
               onChange={() => {
-                setPreventRerender(prev => {
+                setstopUpdate(prev => {
                   const newValue = !prev
                   newValue && setStopwatch(false)
                   return newValue
@@ -46,7 +46,7 @@ export default function TimerComponent() {
               onChange={() => {
                 setStopwatch(prev => {
                   const newValue = !prev
-                  newValue && setPreventRerender(false)
+                  newValue && setstopUpdate(false)
                   return newValue
                 })
               }}
@@ -56,7 +56,7 @@ export default function TimerComponent() {
         </div>
       </StyledSectionTitle>
 
-      {stopwatch ? <Stopwatch /> : preventRerender ? <TimerWithoutUpdate /> : <StandartTimer />}
+      {stopwatch ? <Stopwatch /> : stopUpdate ? <TimerWithoutUpdate /> : <StandartTimer />}
 
       <StyledFooter>
         <StlyedFooterItem href={githubLink} target='_blank'>

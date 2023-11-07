@@ -213,7 +213,7 @@ describe('Timer without update', () => {
     const renderCountRef = useRef(0)
     renderCountRef.current++
 
-    const timer = useTimer(10, { autostart, preventRerender: true, onStart, onEnd, onCancel })
+    const timer = useTimer(10, { autostart, stopUpdate: true, onStart, onEnd, onCancel })
 
     return (
       <>
