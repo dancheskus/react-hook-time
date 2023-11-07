@@ -3,9 +3,7 @@ import { useRef } from 'react'
 
 import useTimer from './useTimer/useTimer'
 
-const runTicks = (times: number) => {
-  Array.from({ length: times }).forEach(() => act(() => vi.advanceTimersByTime(1000)))
-}
+const runTicks = (times: number) => [...Array(times).keys()].forEach(() => act(() => vi.advanceTimersByTime(1000)))
 
 vi.useFakeTimers()
 
