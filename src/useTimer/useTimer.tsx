@@ -224,7 +224,8 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const setStep = (newStep: number) => {
-    if (stopUpdate || localStepRef.current === newStep) return
+    if (stopUpdate) return
+    if (localStepRef.current === newStep) return chainingFunctions
 
     localStepRef.current = newStep
 
