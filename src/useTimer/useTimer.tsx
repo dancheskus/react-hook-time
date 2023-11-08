@@ -275,7 +275,6 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  // @ts-ignore
   chainingFunctions = stopUpdate
     ? ({ start, reset, setTime, incTime, decTime, cancel } as T['stopUpdate'] extends true
         ? IChainingFunctionsWithoutUpdate
