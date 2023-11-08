@@ -8,7 +8,8 @@ import {
   ITimer,
   ITimerResultWithUpdate,
   ITimerResultWithoutUpdate,
-  IChainingFunctions,
+  IChainingFunctionsWithoutUpdate,
+  IChainingFunctionsWithUpdate,
 } from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
@@ -27,16 +28,6 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     settings = initialTimeOrSettings as T
   }
 
-  let chainingFunctions: IChainingFunctions = {
-    start: () => chainingFunctions,
-    pause: () => chainingFunctions,
-    reset: () => chainingFunctions,
-    setStep: () => chainingFunctions,
-    setTime: () => chainingFunctions,
-    incTime: () => chainingFunctions,
-    decTime: () => chainingFunctions,
-  }
-
   const {
     autostart,
     stopUpdate,
@@ -53,12 +44,15 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     step = 1000,
   } = settings || {}
 
+  let chainingFunctions = {}
+
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const firstTickRef = useRef<NodeJS.Timeout | null>(null)
   const justRenderedRef = useRef(true)
   const localStepRef = useRef(step)
   const convertedInitialTime = convertTimeToMs(initialTime, timeUnit)
   const convertedInitialTimeInMsRef = useRef(convertedInitialTime)
+  const statelessTimerStartedAtRef = useRef<number>(0)
 
   const [currentTime, setCurrentTime] = useState(convertedInitialTimeInMsRef.current)
   const currentTimeRef = useRef(currentTime)
@@ -66,10 +60,12 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
 
   const cancel = () => {
     // only for stopUpdate
-    if (!timerRef.current) return
+    if (!timerRef.current) return chainingFunctions
 
     onCancel && onCancel()
     stopTimer()
+
+    return chainingFunctions
   }
 
   const stopTimer = () => {
@@ -132,33 +128,39 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     )
   }
 
-  const start = () => {
-    const customChainigFunctions = stopUpdate ? undefined : chainingFunctions
+  const startStatelessTimer = (time: number) => {
+    statelessTimerStartedAtRef.current = Date.now()
 
-    if (timerRef.current) return customChainigFunctions
+    if (timerRef.current) clearTimeout(timerRef.current)
+
+    timerRef.current = setTimeout(
+      () => {
+        statelessTimerStartedAtRef.current = 0
+        onEnd && onEnd()
+        stopTimer()
+      },
+      time < 0 ? 0 : time,
+    )
+  }
+
+  const start = () => {
+    if (timerRef.current) return chainingFunctions
 
     if (stopUpdate) {
       onStart && onStart()
-
       setIsRunning(true)
+      startStatelessTimer(convertedInitialTime)
 
-      timerRef.current = setTimeout(() => {
-        onEnd && onEnd()
-        stopTimer()
-      }, convertedInitialTime)
-
-      return
+      return chainingFunctions
     }
 
-    if (firstTickRef.current || (!stopwatch && currentTimeRef.current === 0)) return customChainigFunctions
+    if (firstTickRef.current || (!stopwatch && currentTimeRef.current === 0)) return chainingFunctions
 
     onStart && onStart(convertMsToSec(currentTimeRef.current))
-
     setIsRunning(true)
-
     enableSetTimeout()
 
-    return customChainigFunctions
+    return chainingFunctions
   }
 
   useOnMount(() => autostart && start())
@@ -171,28 +173,57 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const setTime = (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+    if (stopUpdate) {
+      if (!timerRef.current) return chainingFunctions
+
+      const updatedTimeout = convertTimeToMs(newTime, setTimeSettings?.timeUnit || timeUnit)
+      startStatelessTimer(updatedTimeout)
+      convertedInitialTimeInMsRef.current = updatedTimeout
+
+      return chainingFunctions
+    }
+
     const updatedTime = convertTimeToMs(newTime, setTimeSettings?.timeUnit || timeUnit)
-
     onTimeSet && onTimeSet(convertMsToSec(updatedTime))
-
     convertedInitialTimeInMsRef.current = updatedTime
-
     updateTime(updatedTime)
 
     return chainingFunctions
   }
 
   const incTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+    if (stopUpdate) {
+      if (!timerRef.current) return chainingFunctions
+
+      const prevTime = Date.now() - statelessTimerStartedAtRef.current
+      const updatedTimeout =
+        convertedInitialTime - prevTime + convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
+      startStatelessTimer(updatedTimeout)
+      convertedInitialTimeInMsRef.current = updatedTimeout
+
+      return chainingFunctions
+    }
+
     const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
-
     convertedInitialTimeInMsRef.current = updatedTime
-
     updateTime(updatedTime)
 
     return chainingFunctions
   }
 
   const decTime = (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => {
+    if (stopUpdate) {
+      if (!timerRef.current) return chainingFunctions
+
+      const prevTime = Date.now() - statelessTimerStartedAtRef.current
+      const updatedTimeout =
+        convertedInitialTime - prevTime - convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
+      startStatelessTimer(updatedTimeout)
+      convertedInitialTimeInMsRef.current = updatedTimeout
+
+      return chainingFunctions
+    }
+
     let updatedTime = currentTimeRef.current - convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
 
     if (updatedTime < 0) {
@@ -207,8 +238,15 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   const reset = () => {
-    onReset && onReset(convertMsToSec(convertedInitialTimeInMsRef.current))
+    if (stopUpdate) {
+      if (!timerRef.current) return chainingFunctions
 
+      startStatelessTimer(convertedInitialTimeInMsRef.current)
+
+      return chainingFunctions
+    }
+
+    onReset && onReset(convertMsToSec(convertedInitialTimeInMsRef.current))
     updateTime(convertedInitialTimeInMsRef.current)
 
     return chainingFunctions
@@ -238,12 +276,22 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
   }
 
   // @ts-ignore
-  chainingFunctions = { start, pause, reset, setTime, incTime, decTime, setStep }
+  chainingFunctions = stopUpdate
+    ? ({ start, reset, setTime, incTime, decTime, cancel } as T['stopUpdate'] extends true
+        ? IChainingFunctionsWithoutUpdate
+        : never)
+    : ({ start, reset, setTime, incTime, decTime, pause, setStep } as T['stopUpdate'] extends true
+        ? never
+        : IChainingFunctionsWithUpdate)
 
   return stopUpdate
     ? ({
         start,
         cancel,
+        reset,
+        setTime,
+        incTime,
+        decTime,
         isRunning,
       } as T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never)
     : ({

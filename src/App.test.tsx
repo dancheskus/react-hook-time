@@ -45,32 +45,22 @@ describe('Standart timer', () => {
   it('should start timer', () => {
     render(<StandartTimerComponent />)
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
   it('should pause timer', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('pause'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
   it('should reset timer', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('reset'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('10')
@@ -83,11 +73,8 @@ describe('Standart timer', () => {
   })
 
   it('should decrease time when timer is running', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(2000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(2)
     fireEvent.click(screen.getByTestId('decrease'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('3')
   })
@@ -99,11 +86,8 @@ describe('Standart timer', () => {
   })
 
   it('should increase time when timer is running', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(5)
     fireEvent.click(screen.getByTestId('increase'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('10')
   })
@@ -115,17 +99,14 @@ describe('Standart timer', () => {
   })
 
   it('should set time when timer is running', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('set-time'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('20')
   })
 
-  it('should set time in minutes when timer', () => {
+  it('should set time in minutes', () => {
     render(<StandartTimerComponent />)
     fireEvent.click(screen.getByTestId('set-time-min'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('60')
@@ -135,18 +116,14 @@ describe('Standart timer', () => {
     render(<StandartTimerComponent />)
     fireEvent.click(screen.getByTestId('set-step'))
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(4000)
-    })
+    runTicks(4)
     // this timer should run twice faster
     expect(screen.getByTestId('current-time')).toHaveTextContent('2')
   })
 
   it('should run timer automatically if autostart is true', () => {
     render(<StandartTimerComponent autostart />)
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
@@ -160,11 +137,8 @@ describe('Standart timer', () => {
   })
 
   it('should stop timer when time is over', () => {
-    render(<StandartTimerComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(20000)
-    })
+    render(<StandartTimerComponent autostart />)
+    runTicks(20)
     expect(screen.getByTestId('current-time')).toHaveTextContent('0')
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
     fireEvent.click(screen.getByTestId('start'))
@@ -195,10 +169,15 @@ describe('Standart timer', () => {
     fireEvent.click(screen.getByTestId('set-step'))
     expect(onUpdate).toBeCalledTimes(3)
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(10000)
-    })
+    runTicks(10)
     expect(onEnd).toBeCalledTimes(1)
+  })
+
+  it('should not run onStart callback if autostart is false', () => {
+    render(<StandartTimerComponent />)
+    expect(onStart).toBeCalledTimes(0)
+    fireEvent.click(screen.getByTestId('start'))
+    expect(onStart).toBeCalledTimes(1)
   })
 })
 
@@ -207,16 +186,20 @@ describe('Timer without update', () => {
   const onCancel = vi.fn()
   const onEnd = vi.fn()
 
-  const TimerWithoutUpdateComponent = ({ autostart }: { autostart?: boolean }) => {
+  const TimerWithoutUpdateComponent = ({ autostart, initialTime }: { autostart?: boolean; initialTime?: number }) => {
     const renderCountRef = useRef(0)
     renderCountRef.current++
 
-    const timer = useTimer(10, { autostart, stopUpdate: true, onStart, onEnd, onCancel })
+    const timer = useTimer(initialTime || 10, { autostart, stopUpdate: true, onStart, onEnd, onCancel })
 
     return (
       <>
         <button data-testid='start' onClick={timer.start} />
         <button data-testid='cancel' onClick={timer.cancel} />
+        <button data-testid='reset' onClick={timer.reset} />
+        <button data-testid='decrease' onClick={() => timer.decTime(5)} />
+        <button data-testid='increase' onClick={() => timer.incTime(5)} />
+        <button data-testid='set-time' onClick={() => timer.setTime(20)} />
         <div data-testid='running-state'>{String(timer.isRunning)}</div>
         <div data-testid='render-count'>{renderCountRef.current}</div>
       </>
@@ -226,25 +209,58 @@ describe('Timer without update', () => {
   it('should start timer. Should stop it when time is over', () => {
     render(<TimerWithoutUpdateComponent />)
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('running-state')).toHaveTextContent('true')
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
   })
 
   it('should stop timer when cancel method is called', () => {
-    render(<TimerWithoutUpdateComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<TimerWithoutUpdateComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('running-state')).toHaveTextContent('true')
     fireEvent.click(screen.getByTestId('cancel'))
     expect(screen.getByTestId('running-state')).toHaveTextContent('false')
+  })
+
+  it('should reset timer', () => {
+    render(<TimerWithoutUpdateComponent autostart />)
+    runTicks(5)
+    fireEvent.click(screen.getByTestId('reset'))
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(5)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(5)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('2')
+  })
+
+  it('should decrease time', () => {
+    render(<TimerWithoutUpdateComponent initialTime={15} autostart />)
+    runTicks(5)
+    fireEvent.click(screen.getByTestId('decrease'))
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(5)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('2')
+  })
+
+  it('should increase time', () => {
+    render(<TimerWithoutUpdateComponent autostart />)
+    runTicks(5)
+    fireEvent.click(screen.getByTestId('increase'))
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(10)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('2')
+  })
+
+  it('should set time', () => {
+    render(<TimerWithoutUpdateComponent autostart />)
+    runTicks(5)
+    fireEvent.click(screen.getByTestId('set-time'))
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(19)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('1')
+    runTicks(20)
+    expect(screen.getByTestId('render-count')).toHaveTextContent('2')
   })
 
   it('should rerender 2 times', () => {
@@ -260,9 +276,7 @@ describe('Timer without update', () => {
     fireEvent.click(screen.getByTestId('cancel'))
     expect(onCancel).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(10000)
-    })
+    runTicks(10)
     expect(onEnd).toBeCalledTimes(1)
   })
 })
@@ -308,32 +322,22 @@ describe('Stopwatch', () => {
   it('should start timer', () => {
     render(<StopwatchComponent />)
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
   it('should pause timer', () => {
-    render(<StopwatchComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StopwatchComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('pause'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
   it('should reset timer', () => {
-    render(<StopwatchComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StopwatchComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('reset'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('0')
@@ -346,11 +350,8 @@ describe('Stopwatch', () => {
   })
 
   it('should decrease time when timer is running', () => {
-    render(<StopwatchComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(10000)
-    })
+    render(<StopwatchComponent autostart />)
+    runTicks(10)
     fireEvent.click(screen.getByTestId('decrease'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
@@ -362,11 +363,8 @@ describe('Stopwatch', () => {
   })
 
   it('should increase time when timer is running', () => {
-    render(<StopwatchComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StopwatchComponent autostart />)
+    runTicks(5)
     fireEvent.click(screen.getByTestId('increase'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('10')
   })
@@ -378,17 +376,14 @@ describe('Stopwatch', () => {
   })
 
   it('should set time when timer is running', () => {
-    render(<StopwatchComponent />)
-    fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    render(<StopwatchComponent autostart />)
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
     fireEvent.click(screen.getByTestId('set-time'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('20')
   })
 
-  it('should set time in minutes when timer', () => {
+  it('should set time in minutes', () => {
     render(<StopwatchComponent />)
     fireEvent.click(screen.getByTestId('set-time-min'))
     expect(screen.getByTestId('current-time')).toHaveTextContent('60')
@@ -398,18 +393,14 @@ describe('Stopwatch', () => {
     render(<StopwatchComponent />)
     fireEvent.click(screen.getByTestId('set-step'))
     fireEvent.click(screen.getByTestId('start'))
-    act(() => {
-      vi.advanceTimersByTime(4000)
-    })
+    runTicks(4)
     // this timer should run twice faster
     expect(screen.getByTestId('current-time')).toHaveTextContent('8')
   })
 
   it('should run timer automatically if autostart is true', () => {
     render(<StopwatchComponent autostart />)
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
+    runTicks(5)
     expect(screen.getByTestId('current-time')).toHaveTextContent('5')
   })
 
@@ -500,5 +491,31 @@ describe('chaining functions', () => {
 
   it('should test chaining functions', () => {
     render(<ChainingFunctionsStopwatchComponent />)
+  })
+
+  const ChainingFunctionsWithoutUpdateComponent = () => {
+    const timer = useTimer(10, { stopUpdate: true })
+
+    useEffect(() => {
+      timer
+        .start()
+        .cancel()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+        .start()
+        .cancel()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+    }, [])
+
+    return null
+  }
+
+  it('should test chaining functions', () => {
+    render(<ChainingFunctionsWithoutUpdateComponent />)
   })
 })

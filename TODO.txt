@@ -3,4 +3,5 @@ TODO:
 - difficult Types import
   // import { TTimeUnit } from 'react-hook-time/dist/src/ReactTimer/types'
 - remove // @ts-ignore from chainingFunctions = { start, pause, reset, setTime, incTime, decTime }
-- incTime, decTime, setStep and setTime should work in stopUpdate mode as well
+- write test for updated convertedInitialTimeInMsRef.current. check that reset always resets to updated value
+- stop onUpdate callback working twice after decTime, incTime and setTime

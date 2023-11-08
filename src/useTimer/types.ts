@@ -63,21 +63,36 @@ export interface ITimer {
   step?: number
 }
 
-export interface IChainingFunctions {
-  start: () => IChainingFunctions
-  pause: () => IChainingFunctions
-  reset: () => IChainingFunctions
-  setStep: (newStep: number) => IChainingFunctions
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
-  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
-  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctions
+export interface IChainingFunctionsWithUpdate {
+  start: () => IChainingFunctionsWithUpdate
+  reset: () => IChainingFunctionsWithUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
+  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
+  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
+  setStep: (newStep: number) => IChainingFunctionsWithUpdate
+  pause: () => IChainingFunctionsWithUpdate
+}
+
+export interface IChainingFunctionsWithoutUpdate {
+  start: () => IChainingFunctionsWithoutUpdate
+  reset: () => IChainingFunctionsWithoutUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithoutUpdate
+  incTime: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: { timeUnit?: TTimeUnit },
+  ) => IChainingFunctionsWithoutUpdate
+  decTime: (
+    timeAmount: TTimerInitialTime,
+    setTimeSettings?: { timeUnit?: TTimeUnit },
+  ) => IChainingFunctionsWithoutUpdate
+  cancel: () => IChainingFunctionsWithoutUpdate
 }
 
 export interface ITimerResultWithUpdate {
   start: () => ITimerResultWithUpdate
   pause: () => ITimerResultWithUpdate
   reset: () => ITimerResultWithUpdate
-  setStep: (newStep: number) => IChainingFunctions
+  setStep: (newStep: number) => IChainingFunctionsWithUpdate
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
   decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
@@ -87,7 +102,11 @@ export interface ITimerResultWithUpdate {
 }
 
 export interface ITimerResultWithoutUpdate {
-  start: () => IChainingFunctions
-  cancel: () => void
+  start: () => ITimerResultWithoutUpdate
+  cancel: () => ITimerResultWithoutUpdate
+  reset: () => ITimerResultWithoutUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
   isRunning: boolean
+  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
+  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
 }
