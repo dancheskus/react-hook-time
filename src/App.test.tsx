@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import useTimer from './useTimer/useTimer'
 
@@ -442,5 +442,63 @@ describe('Stopwatch', () => {
     expect(onUpdate).toBeCalledTimes(2)
     fireEvent.click(screen.getByTestId('set-time'))
     expect(onTimeSet).toBeCalledTimes(1)
+  })
+})
+
+describe('chaining functions', () => {
+  const ChainingFunctionsComponent = () => {
+    const timer = useTimer(10)
+
+    useEffect(() => {
+      timer
+        .start()
+        .pause()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+        .setStep(500)
+        .start()
+        .pause()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+        .setStep(500)
+    }, [])
+
+    return null
+  }
+
+  it('should test chaining functions', () => {
+    render(<ChainingFunctionsComponent />)
+  })
+
+  const ChainingFunctionsStopwatchComponent = () => {
+    const timer = useTimer(10, { stopwatch: true })
+
+    useEffect(() => {
+      timer
+        .start()
+        .pause()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+        .setStep(500)
+        .start()
+        .pause()
+        .reset()
+        .decTime(1)
+        .incTime(1)
+        .setTime(20)
+        .setStep(500)
+    }, [])
+
+    return null
+  }
+
+  it('should test chaining functions', () => {
+    render(<ChainingFunctionsStopwatchComponent />)
   })
 })
