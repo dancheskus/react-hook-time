@@ -69,7 +69,7 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 
 
-**stopUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available
+**stopUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available. `currentTime` is not available as well.
 
 **stopwatch** - with this prop `onEnd` callback is disabled
 
