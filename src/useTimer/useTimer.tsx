@@ -275,34 +275,22 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
+  type TChainingFnWithoutUpdate = T['stopUpdate'] extends true ? IChainingFunctionsWithoutUpdate : never
+  type TChainingFnWithUpdate = T['stopUpdate'] extends true ? never : IChainingFunctionsWithUpdate
+
   chainingFunctions = stopUpdate
-    ? ({ start, reset, setTime, incTime, decTime, cancel } as T['stopUpdate'] extends true
-        ? IChainingFunctionsWithoutUpdate
-        : never)
-    : ({ start, reset, setTime, incTime, decTime, pause, setStep } as T['stopUpdate'] extends true
-        ? never
-        : IChainingFunctionsWithUpdate)
+    ? ({ start, reset, setTime, incTime, decTime, cancel } as TChainingFnWithoutUpdate)
+    : ({ start, reset, setTime, incTime, decTime, pause, setStep } as TChainingFnWithUpdate)
+
+  type TTimerResultWithoutUpdate = T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never
+  type TTimerResultWithUpdate = T['stopUpdate'] extends true ? never : ITimerResultWithUpdate
 
   return stopUpdate
-    ? ({
-        start,
-        cancel,
-        reset,
-        setTime,
-        incTime,
-        decTime,
-        isRunning,
-      } as T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never)
+    ? ({ ...chainingFunctions, isRunning } as TTimerResultWithoutUpdate)
     : ({
-        start,
-        pause,
-        reset,
-        setTime,
-        incTime,
-        decTime,
-        setStep,
+        ...chainingFunctions,
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as T['stopUpdate'] extends true ? never : ITimerResultWithUpdate)
+      } as TTimerResultWithUpdate)
 }
