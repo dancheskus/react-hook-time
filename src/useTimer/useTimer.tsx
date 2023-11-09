@@ -16,14 +16,14 @@ import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
 export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
-  initialTimeOrSettings: TTimerInitialTime | T,
+  initialTimeOrSettings?: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
 ): T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
   if (!['number', 'string'].includes(typeof initialTimeOrSettings) && !(initialTimeOrSettings instanceof Date)) {
-    // if first argument is settings object
+    // if no first argument or it is settings object
     initialTime = 0
     settings = initialTimeOrSettings as T
   }

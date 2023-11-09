@@ -5,5 +5,4 @@ TODO:
 - write test for updated convertedInitialTimeInMsRef.current. check that reset always resets to updated value
 - stop onUpdate callback working twice after decTime, incTime and setTime
 - update demo page to support decTime, incTime and setTime in stopUpdate mode
-- allow useTimer() to be initialized without any argumants to setTime later
 - add errors to console if something is wrong

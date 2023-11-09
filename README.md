@@ -38,12 +38,18 @@ function App() {
 ```
 
 ### API
-There are 3 options to pass arguments to `useTimer()`. You can pass initialTime, initialTime and settings object or just settings object. InitialTime can be number or `Date` object
+There are few options to initialize timer. You can pass:
+- initialTime
+- initialTime and settings object
+- settings object
+- leave it empty to set it up later with `setTime` for async setup
+> initialTime can be `number` or `Date` object
 ```js
 const timer = useTimer(10)
 const timerFromDate = useTimer(new Date('2023-12-01'))
 const timerWithoutUpdates = useTimer(15, { stopUpdate: true })
 const stopwatch = useTimer({ stopwatch: true })
+const timerWithoutSettings = useTimer()
 ```
 
 #### Props
