@@ -17,13 +17,27 @@ describe('Standart timer', () => {
   const onReset = vi.fn()
   const onUpdate = vi.fn()
   const onTimeSet = vi.fn()
+  const onTimeInc = vi.fn()
+  const onTimeDec = vi.fn()
+  const onStepSet = vi.fn()
   const onEnd = vi.fn()
 
   const StandartTimerComponent = ({ autostart }: { autostart?: boolean }) => {
     const renderCountRef = useRef(0)
     renderCountRef.current++
 
-    const timer = useTimer(10, { autostart, onStart, onPause, onReset, onUpdate, onTimeSet, onEnd })
+    const timer = useTimer(10, {
+      autostart,
+      onStart,
+      onPause,
+      onReset,
+      onUpdate,
+      onTimeSet,
+      onEnd,
+      onTimeInc,
+      onTimeDec,
+      onStepSet,
+    })
 
     return (
       <>
@@ -162,12 +176,15 @@ describe('Standart timer', () => {
     expect(onReset).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('decrease'))
     expect(onUpdate).toBeCalledTimes(1)
+    expect(onTimeDec).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('increase'))
     expect(onUpdate).toBeCalledTimes(2)
+    expect(onTimeInc).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('set-time'))
     expect(onTimeSet).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('set-step'))
     expect(onUpdate).toBeCalledTimes(3)
+    expect(onStepSet).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('start'))
     runTicks(10)
     expect(onEnd).toBeCalledTimes(1)
@@ -190,7 +207,13 @@ describe('Timer without update', () => {
     const renderCountRef = useRef(0)
     renderCountRef.current++
 
-    const timer = useTimer(initialTime || 10, { autostart, stopUpdate: true, onStart, onEnd, onCancel })
+    const timer = useTimer(initialTime || 10, {
+      autostart,
+      stopUpdate: true,
+      onStart,
+      onEnd,
+      onCancel,
+    })
 
     return (
       <>
@@ -287,6 +310,8 @@ describe('Stopwatch', () => {
   const onReset = vi.fn()
   const onUpdate = vi.fn()
   const onTimeSet = vi.fn()
+  const onTimeInc = vi.fn()
+  const onTimeDec = vi.fn()
 
   const StopwatchComponent = ({ autostart, initialTime }: { autostart?: boolean; initialTime?: number }) => {
     const renderCountRef = useRef(0)
@@ -300,6 +325,8 @@ describe('Stopwatch', () => {
       onReset,
       onUpdate,
       onTimeSet,
+      onTimeInc,
+      onTimeDec,
     })
 
     return (
@@ -428,8 +455,10 @@ describe('Stopwatch', () => {
     fireEvent.click(screen.getByTestId('reset'))
     expect(onReset).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('decrease'))
+    expect(onTimeDec).toBeCalledTimes(1)
     expect(onUpdate).toBeCalledTimes(1)
     fireEvent.click(screen.getByTestId('increase'))
+    expect(onTimeInc).toBeCalledTimes(1)
     expect(onUpdate).toBeCalledTimes(2)
     fireEvent.click(screen.getByTestId('set-time'))
     expect(onTimeSet).toBeCalledTimes(1)

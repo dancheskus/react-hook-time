@@ -24,6 +24,9 @@ export interface ITimerWithoutUpdate {
   onPause?: never
   onReset?: never
   onTimeSet?: never
+  onTimeInc?: never
+  onTimeDec?: never
+  onStepSet?: never
   onUpdate?: never
   step?: never
 }
@@ -41,6 +44,9 @@ export interface IStopwatch {
   onStart?: (currentTime: number) => void
   onReset?: (currentTime: number) => void
   onTimeSet?: (currentTime: number) => void
+  onTimeInc?: (currentTime: number) => void
+  onTimeDec?: (currentTime: number) => void
+  onStepSet?: (step: number) => void
   onUpdate?: (currentTime: number) => void
   timeUnit?: TTimeUnit
   step?: number
@@ -57,6 +63,9 @@ export interface ITimer {
   onStart?: (currentTime: number) => void
   onReset?: (currentTime: number) => void
   onTimeSet?: (currentTime: number) => void
+  onTimeInc?: (currentTime: number) => void
+  onTimeDec?: (currentTime: number) => void
+  onStepSet?: (step: number) => void
   onUpdate?: (currentTime: number) => void
   onEnd?: () => void
   timeUnit?: TTimeUnit

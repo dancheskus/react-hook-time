@@ -39,6 +39,9 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     onReset,
     onUpdate,
     onTimeSet,
+    onTimeInc,
+    onTimeDec,
+    onStepSet,
     onEnd,
     timeUnit = 'sec',
     step = 1000,
@@ -205,6 +208,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     }
 
     const updatedTime = currentTimeRef.current + convertTimeToMs(timeAmount, setTimeSettings?.timeUnit || timeUnit)
+    onTimeInc && onTimeInc(convertMsToSec(updatedTime))
     convertedInitialTimeInMsRef.current = updatedTime
     updateTime(updatedTime)
 
@@ -231,7 +235,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     }
 
     convertedInitialTimeInMsRef.current = updatedTime
-
+    onTimeDec && onTimeDec(convertMsToSec(updatedTime))
     updateTime(updatedTime)
 
     return chainingFunctions
@@ -266,6 +270,7 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     if (localStepRef.current === newStep) return chainingFunctions
 
     localStepRef.current = newStep
+    onStepSet && onStepSet(newStep)
 
     if (timerRef.current) {
       pause()

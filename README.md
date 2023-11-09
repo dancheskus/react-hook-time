@@ -113,3 +113,6 @@ onStart | triggers when timer was started | currentTime
 onReset | triggers when timer was reseted | currentTime
 onUpdate | triggers on every tick | currentTime
 onTimeSet | triggers when timer was set | currentTime
+onTimeInc | triggers when timer was increased | currentTime
+onTimeDec | triggers when timer was decreased | currentTime
+onStepSet | triggers when step was set | step
