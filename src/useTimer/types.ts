@@ -60,31 +60,6 @@ export type TTimer = TTimerCommonWithUpdate & {
   onEnd?: () => void
 }
 
-export type TChainingFunctionsWithUpdate = {
-  start: () => TChainingFunctionsWithUpdate
-  reset: () => TChainingFunctionsWithUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
-  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
-  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
-  setStep: (newStep: number) => TChainingFunctionsWithUpdate
-  pause: () => TChainingFunctionsWithUpdate
-}
-
-export type TChainingFunctionsWithoutUpdate = {
-  start: () => TChainingFunctionsWithoutUpdate
-  reset: () => TChainingFunctionsWithoutUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithoutUpdate
-  incTime: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: { timeUnit?: TTimeUnit },
-  ) => TChainingFunctionsWithoutUpdate
-  decTime: (
-    timeAmount: TTimerInitialTime,
-    setTimeSettings?: { timeUnit?: TTimeUnit },
-  ) => TChainingFunctionsWithoutUpdate
-  cancel: () => TChainingFunctionsWithoutUpdate
-}
-
 export type TTimerResultWithUpdate = {
   start: () => TTimerResultWithUpdate
   pause: () => TTimerResultWithUpdate
@@ -98,12 +73,12 @@ export type TTimerResultWithUpdate = {
   formattedCurrentTime: TTimeObject
 }
 
-export type ITimerResultWithoutUpdate = {
-  start: () => ITimerResultWithoutUpdate
-  cancel: () => ITimerResultWithoutUpdate
-  reset: () => ITimerResultWithoutUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
+export type TTimerResultWithoutUpdate = {
+  start: () => TTimerResultWithoutUpdate
+  cancel: () => TTimerResultWithoutUpdate
+  reset: () => TTimerResultWithoutUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
   isRunning: boolean
-  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
-  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithoutUpdate
+  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
+  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
 }

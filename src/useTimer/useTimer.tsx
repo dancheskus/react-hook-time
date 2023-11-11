@@ -7,9 +7,7 @@ import {
   TStopwatch,
   TTimer,
   TTimerResultWithUpdate,
-  ITimerResultWithoutUpdate,
-  TChainingFunctionsWithoutUpdate,
-  TChainingFunctionsWithUpdate,
+  TTimerResultWithoutUpdate,
 } from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
@@ -18,7 +16,7 @@ import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopwatch>(
   initialTimeOrSettings?: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : TTimerResultWithUpdate {
+): T['stopUpdate'] extends true ? TTimerResultWithoutUpdate : TTimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -280,22 +278,18 @@ export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopw
     return chainingFunctions
   }
 
-  type TChainingFnWithoutUpdate = T['stopUpdate'] extends true ? TChainingFunctionsWithoutUpdate : never
-  type TChainingFnWithUpdate = T['stopUpdate'] extends true ? never : TChainingFunctionsWithUpdate
+  const commonChain = { start, reset, setTime, incTime, decTime }
 
-  chainingFunctions = stopUpdate
-    ? ({ start, reset, setTime, incTime, decTime, cancel } as TChainingFnWithoutUpdate)
-    : ({ start, reset, setTime, incTime, decTime, pause, setStep } as TChainingFnWithUpdate)
+  chainingFunctions = stopUpdate ? { ...commonChain, cancel } : { ...commonChain, pause, setStep }
 
-  type TTimerResultWithoutUpdate = T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never
-  type TTimerResultWithUpdate = T['stopUpdate'] extends true ? never : TTimerResultWithUpdate
+  type TTimerResult = T['stopUpdate'] extends true ? TTimerResultWithoutUpdate : TTimerResultWithUpdate
 
   return stopUpdate
-    ? ({ ...chainingFunctions, isRunning } as TTimerResultWithoutUpdate)
+    ? ({ ...chainingFunctions, isRunning } as TTimerResult)
     : ({
         ...chainingFunctions,
         isRunning,
         currentTime: convertMsToSec(currentTime),
         formattedCurrentTime: convertMsToTimeObj(currentTime),
-      } as TTimerResultWithUpdate)
+      } as TTimerResult)
 }

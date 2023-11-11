@@ -6,4 +6,4 @@ TODO:
 - stop onUpdate callback working twice after decTime, incTime and setTime
 - update demo page to support decTime, incTime and setTime in stopUpdate mode
 - add errors to console if something is wrong
-- any not existing callback can be passed in useTimer without ts error.
+- any not existing callback can be passed in useTimer without ts error if `stopUpdate: true` or e.g. `onPause: () => {}` was passed in the object
