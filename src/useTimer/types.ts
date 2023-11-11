@@ -32,7 +32,7 @@ type TTimerCommonWithUpdate = TTimerCommon & {
 }
 
 export type TTimerWithoutUpdate = TTimerCommon & {
-  stopUpdate?: true
+  stopUpdate: true
 
   stopwatch?: never
   onStart?: () => void
