@@ -1,4 +1,4 @@
-export interface ITimeObject {
+export type TTimeObject = {
   years: number
   days: number
   hours: number
@@ -10,15 +10,34 @@ export type TTimeUnit = 'ms' | 'sec' | 'min' | 'hour' | 'day'
 
 export type TTimerInitialTime = number | string | Date
 
-export interface ITimerWithoutUpdate {
+type TTimerCommon = {
+  autostart?: boolean
+  timeUnit?: TTimeUnit
+}
+
+type TTimerCommonWithUpdate = TTimerCommon & {
+  stopUpdate?: never
+  onCancel?: never
+
+  speedUpFirstSecond?: boolean
+  onPause?: (currentTime: number) => void
+  onStart?: (currentTime: number) => void
+  onReset?: (currentTime: number) => void
+  onTimeSet?: (currentTime: number) => void
+  onTimeInc?: (currentTime: number) => void
+  onTimeDec?: (currentTime: number) => void
+  onStepSet?: (step: number) => void
+  onUpdate?: (currentTime: number) => void
+  step?: number
+}
+
+export type TTimerWithoutUpdate = TTimerCommon & {
   stopUpdate?: true
 
   stopwatch?: never
-  autostart?: boolean
   onStart?: () => void
   onCancel?: () => void
   onEnd?: () => void
-  timeUnit?: TTimeUnit
 
   speedUpFirstSecond?: never
   onPause?: never
@@ -31,86 +50,55 @@ export interface ITimerWithoutUpdate {
   step?: never
 }
 
-export interface IStopwatch {
+export type TStopwatch = TTimerCommonWithUpdate & {
   stopwatch?: true
-
-  stopUpdate?: never
-  onCancel?: never
   onEnd?: never
-
-  autostart?: boolean
-  speedUpFirstSecond?: boolean
-  onPause?: (currentTime: number) => void
-  onStart?: (currentTime: number) => void
-  onReset?: (currentTime: number) => void
-  onTimeSet?: (currentTime: number) => void
-  onTimeInc?: (currentTime: number) => void
-  onTimeDec?: (currentTime: number) => void
-  onStepSet?: (step: number) => void
-  onUpdate?: (currentTime: number) => void
-  timeUnit?: TTimeUnit
-  step?: number
 }
 
-export interface ITimer {
-  stopUpdate?: never
+export type TTimer = TTimerCommonWithUpdate & {
   stopwatch?: never
-  onCancel?: never
-
-  autostart?: boolean
-  speedUpFirstSecond?: boolean
-  onPause?: (currentTime: number) => void
-  onStart?: (currentTime: number) => void
-  onReset?: (currentTime: number) => void
-  onTimeSet?: (currentTime: number) => void
-  onTimeInc?: (currentTime: number) => void
-  onTimeDec?: (currentTime: number) => void
-  onStepSet?: (step: number) => void
-  onUpdate?: (currentTime: number) => void
   onEnd?: () => void
-  timeUnit?: TTimeUnit
-  step?: number
 }
 
-export interface IChainingFunctionsWithUpdate {
-  start: () => IChainingFunctionsWithUpdate
-  reset: () => IChainingFunctionsWithUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
-  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
-  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithUpdate
-  setStep: (newStep: number) => IChainingFunctionsWithUpdate
-  pause: () => IChainingFunctionsWithUpdate
+export type TChainingFunctionsWithUpdate = {
+  start: () => TChainingFunctionsWithUpdate
+  reset: () => TChainingFunctionsWithUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
+  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
+  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithUpdate
+  setStep: (newStep: number) => TChainingFunctionsWithUpdate
+  pause: () => TChainingFunctionsWithUpdate
 }
 
-export interface IChainingFunctionsWithoutUpdate {
-  start: () => IChainingFunctionsWithoutUpdate
-  reset: () => IChainingFunctionsWithoutUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => IChainingFunctionsWithoutUpdate
+export type TChainingFunctionsWithoutUpdate = {
+  start: () => TChainingFunctionsWithoutUpdate
+  reset: () => TChainingFunctionsWithoutUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TChainingFunctionsWithoutUpdate
   incTime: (
     timeAmount: TTimerInitialTime,
     setTimeSettings?: { timeUnit?: TTimeUnit },
-  ) => IChainingFunctionsWithoutUpdate
+  ) => TChainingFunctionsWithoutUpdate
   decTime: (
     timeAmount: TTimerInitialTime,
     setTimeSettings?: { timeUnit?: TTimeUnit },
-  ) => IChainingFunctionsWithoutUpdate
-  cancel: () => IChainingFunctionsWithoutUpdate
+  ) => TChainingFunctionsWithoutUpdate
+  cancel: () => TChainingFunctionsWithoutUpdate
 }
 
-export interface ITimerResultWithUpdate {
-  start: () => ITimerResultWithUpdate
-  pause: () => ITimerResultWithUpdate
-  reset: () => ITimerResultWithUpdate
-  setStep: (newStep: number) => IChainingFunctionsWithUpdate
-  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
-  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
-  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => ITimerResultWithUpdate
+export type TTimerResultWithUpdate = {
+  start: () => TTimerResultWithUpdate
+  pause: () => TTimerResultWithUpdate
+  reset: () => TTimerResultWithUpdate
+  setStep: (newStep: number) => TChainingFunctionsWithUpdate
+  setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithUpdate
+  incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithUpdate
+  decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithUpdate
   isRunning: boolean
   currentTime: number
-  formattedCurrentTime: ITimeObject
+  formattedCurrentTime: TTimeObject
 }
 
-export interface ITimerResultWithoutUpdate {
+export type ITimerResultWithoutUpdate = {
   start: () => ITimerResultWithoutUpdate
   cancel: () => ITimerResultWithoutUpdate
   reset: () => ITimerResultWithoutUpdate

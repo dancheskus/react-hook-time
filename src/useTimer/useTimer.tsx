@@ -3,22 +3,22 @@ import { useEffect, useRef, useState } from 'react'
 import {
   TTimerInitialTime,
   TTimeUnit,
-  ITimerWithoutUpdate,
-  IStopwatch,
-  ITimer,
-  ITimerResultWithUpdate,
+  TTimerWithoutUpdate,
+  TStopwatch,
+  TTimer,
+  TTimerResultWithUpdate,
   ITimerResultWithoutUpdate,
-  IChainingFunctionsWithoutUpdate,
-  IChainingFunctionsWithUpdate,
+  TChainingFunctionsWithoutUpdate,
+  TChainingFunctionsWithUpdate,
 } from './types'
 import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
-export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopwatch>(
+export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopwatch>(
   initialTimeOrSettings?: TTimerInitialTime | T,
   settingsOrInitialTime?: T,
-): T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : ITimerResultWithUpdate {
+): T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : TTimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
   let settings: T = settingsOrInitialTime as T
 
@@ -280,15 +280,15 @@ export default function useTimer<T extends ITimer | ITimerWithoutUpdate | IStopw
     return chainingFunctions
   }
 
-  type TChainingFnWithoutUpdate = T['stopUpdate'] extends true ? IChainingFunctionsWithoutUpdate : never
-  type TChainingFnWithUpdate = T['stopUpdate'] extends true ? never : IChainingFunctionsWithUpdate
+  type TChainingFnWithoutUpdate = T['stopUpdate'] extends true ? TChainingFunctionsWithoutUpdate : never
+  type TChainingFnWithUpdate = T['stopUpdate'] extends true ? never : TChainingFunctionsWithUpdate
 
   chainingFunctions = stopUpdate
     ? ({ start, reset, setTime, incTime, decTime, cancel } as TChainingFnWithoutUpdate)
     : ({ start, reset, setTime, incTime, decTime, pause, setStep } as TChainingFnWithUpdate)
 
   type TTimerResultWithoutUpdate = T['stopUpdate'] extends true ? ITimerResultWithoutUpdate : never
-  type TTimerResultWithUpdate = T['stopUpdate'] extends true ? never : ITimerResultWithUpdate
+  type TTimerResultWithUpdate = T['stopUpdate'] extends true ? never : TTimerResultWithUpdate
 
   return stopUpdate
     ? ({ ...chainingFunctions, isRunning } as TTimerResultWithoutUpdate)
