@@ -168,6 +168,24 @@ describe('Standart timer', () => {
     expect(screen.getByTestId('render-count')).toHaveTextContent('6')
   })
 
+  it('should start timer without any settings', () => {
+    const Test = () => {
+      const timer = useTimer()
+
+      return (
+        <>
+          <button data-testid='execute' onClick={() => timer.setTime(10).start()} />
+          <div data-testid='current-time'>{timer.currentTime}</div>
+        </>
+      )
+    }
+
+    render(<Test />)
+    fireEvent.click(screen.getByTestId('execute'))
+    runTicks(5)
+    expect(screen.getByTestId('current-time')).toHaveTextContent('5')
+  })
+
   it('should call callbacks correctly', () => {
     render(<StandartTimerComponent />)
     fireEvent.click(screen.getByTestId('start'))
