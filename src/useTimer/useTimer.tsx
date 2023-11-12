@@ -278,6 +278,18 @@ export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopw
     return chainingFunctions
   }
 
+  const getCurrentTime = () => {
+    if (!stopUpdate) return
+
+    return convertedInitialTimeInMsRef.current - (Date.now() - statelessTimerStartedAtRef.current)
+  }
+
+  const getFormattedCurrentTime = () => {
+    if (!stopUpdate) return
+
+    return convertMsToTimeObj(convertedInitialTimeInMsRef.current - (Date.now() - statelessTimerStartedAtRef.current))
+  }
+
   const commonChain = { start, reset, setTime, incTime, decTime }
 
   chainingFunctions = stopUpdate ? { ...commonChain, cancel } : { ...commonChain, pause, setStep }
@@ -285,7 +297,7 @@ export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopw
   type TTimerResult = T['stopUpdate'] extends true ? TTimerResultWithoutUpdate : TTimerResultWithUpdate
 
   return stopUpdate
-    ? ({ ...chainingFunctions, isRunning } as TTimerResult)
+    ? ({ ...chainingFunctions, isRunning, getCurrentTime, getFormattedCurrentTime } as TTimerResult)
     : ({
         ...chainingFunctions,
         isRunning,

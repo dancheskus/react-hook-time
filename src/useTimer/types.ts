@@ -79,6 +79,8 @@ export type TTimerResultWithoutUpdate = {
   reset: () => TTimerResultWithoutUpdate
   setTime: (newTime: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
   isRunning: boolean
+  getCurrentTime: () => number
+  getFormattedCurrentTime: () => TTimeObject
   incTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
   decTime: (timeAmount: TTimerInitialTime, setTimeSettings?: { timeUnit?: TTimeUnit }) => TTimerResultWithoutUpdate
 }

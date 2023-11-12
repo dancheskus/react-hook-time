@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+import { TTimeObject } from 'useTimer/types'
 
 import useTimer from './useTimer/useTimer'
 
@@ -204,6 +206,7 @@ describe('Timer without update', () => {
   const onEnd = vi.fn()
 
   const TimerWithoutUpdateComponent = ({ autostart, initialTime }: { autostart?: boolean; initialTime?: number }) => {
+    const [currentTime, setCurrentTime] = useState<number>()
     const renderCountRef = useRef(0)
     renderCountRef.current++
 
@@ -223,6 +226,8 @@ describe('Timer without update', () => {
         <button data-testid='decrease' onClick={() => timer.decTime(5)} />
         <button data-testid='increase' onClick={() => timer.incTime(5)} />
         <button data-testid='set-time' onClick={() => timer.setTime(20)} />
+        <button data-testid='get-current-time' onClick={() => setCurrentTime(timer.getCurrentTime())} />
+        <div data-testid='current-time'>{currentTime}</div>
         <div data-testid='running-state'>{String(timer.isRunning)}</div>
         <div data-testid='render-count'>{renderCountRef.current}</div>
       </>
@@ -301,6 +306,13 @@ describe('Timer without update', () => {
     fireEvent.click(screen.getByTestId('start'))
     runTicks(10)
     expect(onEnd).toBeCalledTimes(1)
+  })
+
+  it('should get current time and update state', () => {
+    render(<TimerWithoutUpdateComponent initialTime={15} autostart />)
+    runTicks(5)
+    fireEvent.click(screen.getByTestId('get-current-time'))
+    expect(screen.getByTestId('current-time')).toHaveTextContent('10000')
   })
 })
 
@@ -546,5 +558,70 @@ describe('chaining functions', () => {
 
   it('should test chaining functions', () => {
     render(<ChainingFunctionsWithoutUpdateComponent />)
+  })
+})
+
+describe('formatted time', () => {
+  it('should return formatted time in standart timer', () => {
+    const StandartTimer = () => {
+      const timer = useTimer(31719845)
+
+      return (
+        <>
+          <div data-testid='years'>{timer.formattedCurrentTime.years}</div>
+          <div data-testid='days'>{timer.formattedCurrentTime.days}</div>
+          <div data-testid='hours'>{timer.formattedCurrentTime.hours}</div>
+          <div data-testid='minutes'>{timer.formattedCurrentTime.minutes}</div>
+          <div data-testid='seconds'>{timer.formattedCurrentTime.seconds}</div>
+          <button data-testid='increase' onClick={() => timer.incTime(1, { timeUnit: 'day' })} />
+        </>
+      )
+    }
+
+    render(<StandartTimer />)
+    expect(screen.getByTestId('years')).toHaveTextContent('1')
+    expect(screen.getByTestId('days')).toHaveTextContent('2')
+    expect(screen.getByTestId('hours')).toHaveTextContent('3')
+    expect(screen.getByTestId('minutes')).toHaveTextContent('4')
+    expect(screen.getByTestId('seconds')).toHaveTextContent('5')
+
+    fireEvent.click(screen.getByTestId('increase'))
+
+    expect(screen.getByTestId('days')).toHaveTextContent('3')
+  })
+
+  it('should return formatted time in timer without update', () => {
+    const TimerWithoutUpdate = () => {
+      const [formattedCurrentTime, setFormattedCurrentTime] = useState<TTimeObject>()
+      const timer = useTimer(31719845, { stopUpdate: true, autostart: true })
+
+      return (
+        <>
+          <div data-testid='years'>{formattedCurrentTime?.years}</div>
+          <div data-testid='days'>{formattedCurrentTime?.days}</div>
+          <div data-testid='hours'>{formattedCurrentTime?.hours}</div>
+          <div data-testid='minutes'>{formattedCurrentTime?.minutes}</div>
+          <div data-testid='seconds'>{formattedCurrentTime?.seconds}</div>
+          <button data-testid='increase' onClick={() => timer.incTime(1, { timeUnit: 'day' })} />
+          <button
+            data-testid='get-current-time'
+            onClick={() => setFormattedCurrentTime(timer.getFormattedCurrentTime())}
+          />
+        </>
+      )
+    }
+
+    render(<TimerWithoutUpdate />)
+    fireEvent.click(screen.getByTestId('get-current-time'))
+    expect(screen.getByTestId('years')).toHaveTextContent('1')
+    expect(screen.getByTestId('days')).toHaveTextContent('2')
+    expect(screen.getByTestId('hours')).toHaveTextContent('3')
+    expect(screen.getByTestId('minutes')).toHaveTextContent('4')
+    expect(screen.getByTestId('seconds')).toHaveTextContent('5')
+
+    fireEvent.click(screen.getByTestId('increase'))
+    expect(screen.getByTestId('days')).toHaveTextContent('2')
+    fireEvent.click(screen.getByTestId('get-current-time'))
+    expect(screen.getByTestId('days')).toHaveTextContent('3')
   })
 })

@@ -75,7 +75,7 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 
 
 
-**stopUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available. `currentTime` is not available as well.
+**stopUpdate** - with this prop most of the callbacks are not working. Only `onStart`, `onEnd` and `onCancel` are available. `currentTime` and `formattedCurrentTime` is not available. Use `getCurrentTime()` and `getFormattedCurrentTime()` instead.
 
 **stopwatch** - with this prop `onEnd` callback is disabled
 
@@ -86,7 +86,9 @@ speedUpFirstSecond* | first tick will happen faster after timer starts. Visual t
 **name** | **description**  | **type**
 --|--|--
 currentTime | current time | number
+getCurrentTime | same as `currentTime` but for stopUpdate=true | number
 formattedCurrentTime | you can get `years, days, hours, minutes, seconds` from this object | object
+getFormattedCurrentTime | same as `formattedCurrentTime` but for stopUpdate=true | object
 isRunning | current timer state | boolean
 start | start timer | () => void
 pause | pause timer | () => void
