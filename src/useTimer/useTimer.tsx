@@ -13,12 +13,72 @@ import useOnMount from './useOnMount'
 import useOnUnmount from './useOnUnmount'
 import { convertMsToSec, convertMsToTimeObj, convertTimeToMs } from './utils'
 
+/**
+ * useTimer hook to create a timer or stopwatch.
+ *
+ * @see https://www.npmjs.com/package/react-hook-time°
+ *
+ * @param initialTimeOrSettings - initial time in seconds or settings object
+ * @param settings - settings object
+ * @param {boolean} [settings.autostart=false] - autostart timer after component mount
+ * @param {boolean} [settings.stopUpdate=false] - not updating currentTime state and not re-rendering component
+ * @param {boolean} [settings.stopwatch=false] - stopwatch mode
+ * @param {boolean} [settings.speedUpFirstSecond=false] - speed up first second for better UX
+ * @param {function} [settings.onPause] - callback function triggered on pause
+ * @param {function} [settings.onCancel] - callback function triggered on cancel `stopUpdate=true`
+ * @param {function} [settings.onStart] - callback function triggered on start
+ * @param {function} [settings.onReset] - callback function triggered on reset
+ * @param {function} [settings.onUpdate] - callback function triggered on every tick
+ * @param {function} [settings.onTimeSet] - callback function triggered on setTime
+ * @param {function} [settings.onTimeInc] - callback function triggered on incTime
+ * @param {function} [settings.onTimeDec] - callback function triggered on decTime
+ * @param {function} [settings.onStepSet] - callback function triggered on setStep
+ * @param {function} [settings.onEnd] - callback function triggered on end
+ * @param {TTimeUnit} [settings.timeUnit='sec'] - time unit for initialTime
+ * @param {number} [settings.step=1000] - step for timer in milliseconds
+ * @returns {TTimerResultWithUpdate | TTimerResultWithoutUpdate} `timer`
+ * @returns {boolean} `timer.isRunning` - is timer running
+ * @returns {number} `timer.currentTime` - current time in seconds
+ * @returns {number} `timer.getCurrentTime` - get current time `stopUpdate=true`
+ * @returns {object} `timer.formattedCurrentTime` - current time in object format
+ * @returns {object} `timer.getFormattedCurrentTime` - get current time in object format `stopUpdate=true`
+ * @returns {function} `timer.start` - start timer
+ * @returns {function} `timer.pause` - pause timer
+ * @returns {function} `timer.cancel` - cancel timer `stopUpdate=true`
+ * @returns {function} `timer.reset` - reset timer
+ * @returns {function} `timer.setTime` - set time
+ * @returns {function} `timer.incTime` - increase time
+ * @returns {function} `timer.decTime` - decrease time
+ * @returns {function} `timer.setStep` - set step
+ * @example
+  * import useTimer from 'react-hook-time'
+
+  * function App() {
+  *   const { currentTime, start, pause, reset } = useTimer(10, {
+  *     onEnd: () => console.log('Timer ended'),
+  *   })
+  * 
+  *   return (
+  *     <div>
+  *       <div>Current time {currentTime}</div>
+  *       <button onClick={start}>start</button>
+  *       <button onClick={pause}>pause</button>
+  *       <button onClick={() => {
+  *         // chaining functions
+  *         reset().pause()
+  *       }}>
+  *         reset
+  *       </button>
+  *     </div>
+  *   )
+  * }
+ */
 export default function useTimer<T extends TTimer | TTimerWithoutUpdate | TStopwatch>(
   initialTimeOrSettings?: TTimerInitialTime | T,
-  settingsOrInitialTime?: T,
+  _settings?: T,
 ): T['stopUpdate'] extends true ? TTimerResultWithoutUpdate : TTimerResultWithUpdate {
   let initialTime: TTimerInitialTime = initialTimeOrSettings as TTimerInitialTime
-  let settings: T = settingsOrInitialTime as T
+  let settings: T = _settings as T
 
   if (!['number', 'string'].includes(typeof initialTimeOrSettings) && !(initialTimeOrSettings instanceof Date)) {
     // if no first argument or it is settings object
